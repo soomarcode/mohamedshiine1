@@ -1,11 +1,12 @@
 import React from 'react';
 import { supabase } from '../supabase';
 
-export default function Header({ onLogin, user }) {
+export default function Header({ onLogin, user, onAdminClick }) {
     const handleLogout = async () => {
         await supabase.auth.signOut();
     };
 
+    const isAdmin = user?.email === 'admin@mohamedshiine.com' || user?.user_metadata?.role === 'admin';
     const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
     const avatarUrl = user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${displayName}&background=28a745&color=fff`;
 
@@ -18,6 +19,14 @@ export default function Header({ onLogin, user }) {
                 <a href="#home">Home</a>
                 <a href="#courses">Courses</a>
                 <a href="#about">About</a>
+                {isAdmin && (
+                    <button
+                        onClick={onAdminClick}
+                        style={{ background: '#1e293b', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', fontSize: '0.8rem', cursor: 'pointer', fontWeight: 600 }}
+                    >
+                        Admin
+                    </button>
+                )}
                 {user ? (
                     <div className="header-user" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column' }}>

@@ -1,42 +1,30 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { supabase } from '../supabase';
 import CourseCard from './CourseCard';
 
-const coursesData = [
-    {
-        id: 1,
-        title: 'E-Commerce Bilow',
-        price: 0,
-        priceLabel: 'FREE',
-        type: 'free',
-        description: 'Bilaw ganacsi online. Soo hel product demand leh, Uyuu gurigaa ka bilow iibkaaga WhatsApp iyo Facebook.',
-        image: '/images/course-ecommerce.png',
-        buttonText: 'Daawo Bilaash',
-    },
-    {
-        id: 2,
-        title: 'WhatsApp Ganacsi Mastery',
-        price: 0,
-        priceLabel: 'FREE',
-        type: 'free',
-        description: 'Master iibinta WhatsApp — automation, marketing, iyo delivery system.',
-        image: '/images/course-whatsapp.png',
-        buttonText: 'Daawo Bilaash',
-    },
-    {
-        id: 3,
-        title: '4 Product Strategy',
-        price: 25,
-        priceLabel: '$25',
-        type: 'paid',
-        description: 'Bilwi Pnoqo Biloma pro buli britoega iyo testing. ka ganacsiyada cusub.',
-        image: '/images/course-product.png',
-        buttonText: 'Faahfaahin',
-    },
-];
-
 export default function Courses({ onCourseClick }) {
+    const [coursesData, setCoursesData] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
     const [search, setSearch] = useState('');
+
+    useEffect(() => {
+        const fetchCourses = async () => {
+            setLoading(true);
+            const { data, error } = await supabase
+                .from('courses')
+                .select('*')
+                .order('id', { ascending: true });
+
+            if (error) {
+                console.error('Error loading courses:', error);
+            } else {
+                setCoursesData(data || []);
+            }
+            setLoading(false);
+        };
+        fetchCourses();
+    }, []);
 
     const filteredCourses = useMemo(() => {
         return coursesData.filter((course) => {

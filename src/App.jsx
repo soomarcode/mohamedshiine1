@@ -7,6 +7,7 @@ import FeaturesBar from './components/FeaturesBar';
 import AuthModal from './components/AuthModal';
 import PaymentModal from './components/PaymentModal';
 import CoursePlayer from './components/CoursePlayer';
+import AdminPanel from './components/AdminPanel';
 import './index.css';
 
 function App() {
@@ -14,7 +15,7 @@ function App() {
   const [modalView, setModalView] = useState('select');
   const [user, setUser] = useState(null);
   const [currentCourse, setCurrentCourse] = useState(null);
-  const [view, setView] = useState('home'); // 'home', 'player'
+  const [view, setView] = useState('home'); // 'home', 'player', 'admin'
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   useEffect(() => {
@@ -82,9 +83,17 @@ function App() {
     return <CoursePlayer course={currentCourse} onBack={() => setView('home')} />;
   }
 
+  if (view === 'admin') {
+    return <AdminPanel onBack={() => setView('home')} />;
+  }
+
   return (
     <div className="app">
-      <Header onLogin={() => openAuthModal('login')} user={user} />
+      <Header
+        onLogin={() => openAuthModal('login')}
+        user={user}
+        onAdminClick={() => setView('admin')}
+      />
       <Hero onCtaClick={() => openAuthModal('select')} />
       <Courses onCourseClick={handleCourseClick} />
       <FeaturesBar />
