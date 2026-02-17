@@ -288,10 +288,10 @@ img {
 .courses-controls {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 28px;
+  justify-content: center;
+  margin-bottom: 24px;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 32px;
 }
 
 .filter-buttons {
