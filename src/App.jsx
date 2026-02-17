@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from './supabase';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Courses from './components/Courses';
@@ -11,10 +12,24 @@ import './index.css';
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalView, setModalView] = useState('select');
-  const [user, setUser] = useState(null); // null or { name: 'Mohamed' }
+  const [user, setUser] = useState(null);
   const [currentCourse, setCurrentCourse] = useState(null);
   const [view, setView] = useState('home'); // 'home', 'player'
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+
+  useEffect(() => {
+    // Check active session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const openAuthModal = (view = 'select') => {
     setModalView(view);
@@ -39,7 +54,7 @@ function App() {
   };
 
   const handleLoginSuccess = () => {
-    setUser({ name: 'Mohamed', avatar: '/images/hero-person.png' });
+    // User logic handled by onAuthStateChange
     setIsModalOpen(false);
     if (currentCourse) {
       processCourse(currentCourse);
