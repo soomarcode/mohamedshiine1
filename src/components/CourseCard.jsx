@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function CourseCard({ title, price, priceLabel, description, image, buttonText, type }) {
+export default function CourseCard({ title, price, priceLabel, description, image, buttonText, type, onClick }) {
     const isFree = type === 'free';
 
     return (
@@ -13,7 +13,7 @@ export default function CourseCard({ title, price, priceLabel, description, imag
                     <h3>{title}</h3>
                 </div>
                 <p>{description}</p>
-                <button className={`btn-course ${isFree ? 'free' : 'paid'}`}>
+                <button className={`btn-course ${isFree ? 'free' : 'paid'}`} onClick={onClick}>
                     {buttonText}
                 </button>
             </div>

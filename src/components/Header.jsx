@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Header() {
+export default function Header({ onLogin }) {
     return (
         <header className="header">
             <div className="header-logo">
@@ -10,7 +10,7 @@ export default function Header() {
                 <a href="#home">Home</a>
                 <a href="#courses">Courses</a>
                 <a href="#about">About</a>
-                <button className="btn-login">Login</button>
+                <button className="btn-login" onClick={onLogin}>Login</button>
             </nav>
         </header>
     );

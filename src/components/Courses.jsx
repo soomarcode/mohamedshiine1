@@ -34,7 +34,7 @@ const coursesData = [
     },
 ];
 
-export default function Courses() {
+export default function Courses({ onCourseClick }) {
     const [filter, setFilter] = useState('all');
     const [search, setSearch] = useState('');
 
@@ -81,7 +81,7 @@ export default function Courses() {
                 <div className="courses-list">
                     {filteredCourses.length > 0 ? (
                         filteredCourses.map((course) => (
-                            <CourseCard key={course.id} {...course} />
+                            <CourseCard key={course.id} {...course} onClick={onCourseClick} />
                         ))
                     ) : (
                         <p style={{ textAlign: 'center', color: '#6c757d', padding: '40px' }}>
