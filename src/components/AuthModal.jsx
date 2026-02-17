@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const AuthModal = ({ isOpen, onClose, initialView = 'select' }) => {
+const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) => {
     if (!isOpen) return null;
 
     // 'select', 'signup', 'login'
@@ -56,7 +56,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select' }) => {
                         <h2 className="modal-title">Sign Up for <span className="highlight-green">Free</span></h2>
                         <p className="modal-subtitle">Abuur account, hel koorsooyinka FREE-ga ah!</p>
 
-                        <form className="auth-form">
+                        <form className="auth-form" onSubmit={(e) => { e.preventDefault(); onLoginSuccess && onLoginSuccess(); }}>
                             <div className="form-group">
                                 <span className="input-icon">👤</span>
                                 <input type="text" placeholder="Full Name" />
@@ -113,7 +113,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select' }) => {
                         <h2 className="modal-title">Welcome Back!</h2>
                         <p className="modal-subtitle">Gal akoonkaaga si aad u sii wadato.</p>
 
-                        <form className="auth-form">
+                        <form className="auth-form" onSubmit={(e) => { e.preventDefault(); onLoginSuccess && onLoginSuccess(); }}>
                             <div className="form-group">
                                 <span className="input-icon">✉️</span>
                                 <input type="email" placeholder="Email Address..." />

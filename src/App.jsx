@@ -4,27 +4,76 @@ import Hero from './components/Hero';
 import Courses from './components/Courses';
 import FeaturesBar from './components/FeaturesBar';
 import AuthModal from './components/AuthModal';
+import PaymentModal from './components/PaymentModal';
+import CoursePlayer from './components/CoursePlayer';
 import './index.css';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalView, setModalView] = useState('select');
+  const [user, setUser] = useState(null); // null or { name: 'Mohamed' }
+  const [currentCourse, setCurrentCourse] = useState(null);
+  const [view, setView] = useState('home'); // 'home', 'player'
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
-  const openModal = (view = 'select') => {
+  const openAuthModal = (view = 'select') => {
     setModalView(view);
     setIsModalOpen(true);
   };
 
+  const handleCourseClick = (course) => {
+    setCurrentCourse(course);
+    if (!user) {
+      openAuthModal('signup');
+    } else {
+      processCourse(course);
+    }
+  };
+
+  const processCourse = (course) => {
+    if (course.type === 'free') {
+      setView('player');
+    } else {
+      setIsPaymentOpen(true);
+    }
+  };
+
+  const handleLoginSuccess = () => {
+    setUser({ name: 'Mohamed', avatar: '/images/hero-person.png' });
+    setIsModalOpen(false);
+    if (currentCourse) {
+      processCourse(currentCourse);
+    }
+  };
+
+  const handlePaymentComplete = () => {
+    setIsPaymentOpen(false);
+    setView('player'); // Go to player after payment
+  };
+
+  if (view === 'player' && currentCourse) {
+    return <CoursePlayer course={currentCourse} onBack={() => setView('home')} />;
+  }
+
   return (
     <div className="app">
-      <Header onLogin={() => openModal('login')} />
-      <Hero onCtaClick={() => openModal('select')} />
-      <Courses onCourseClick={() => openModal('select')} />
+      <Header onLogin={() => openAuthModal('login')} user={user} />
+      <Hero onCtaClick={() => openAuthModal('select')} />
+      <Courses onCourseClick={handleCourseClick} />
       <FeaturesBar />
+
       <AuthModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         initialView={modalView}
+        onLoginSuccess={handleLoginSuccess}
+      />
+
+      <PaymentModal
+        isOpen={isPaymentOpen}
+        course={currentCourse}
+        onClose={() => setIsPaymentOpen(false)}
+        onComplete={handlePaymentComplete}
       />
     </div>
   );

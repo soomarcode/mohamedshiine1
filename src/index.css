@@ -894,3 +894,339 @@ img {
   margin-top: 12px;
   line-height: 1.4;
 }
+
+/* ===== PAYMENT MODAL ===== */
+.payment-modal-content {
+  max-width: 900px;
+  padding: 0;
+  overflow: hidden;
+  align-items: stretch;
+}
+
+.payment-header {
+  padding: 24px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  text-align: left;
+}
+
+.payment-header h2 {
+  font-size: 1.25rem;
+  color: var(--primary-dark);
+}
+
+.highlight-price {
+  color: var(--accent-gold);
+}
+
+.payment-body {
+  display: flex;
+  flex-direction: row;
+  min-height: 400px;
+}
+
+.payment-methods {
+  flex: 1;
+  padding: 24px;
+  background: white;
+  border-right: 1px solid #eee;
+}
+
+.payment-summary {
+  width: 320px;
+  padding: 24px;
+  background: #fdfdfd;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.payment-option:hover {
+  background: #f8f9fa;
+}
+
+.payment-option.selected {
+  border-color: var(--accent-green);
+  background-color: #f0fff4;
+  box-shadow: 0 0 0 1px var(--accent-green);
+}
+
+.radio-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--accent-green);
+}
+
+.payment-option.selected .radio-circle {
+  border-color: var(--accent-green);
+  background: white;
+}
+
+.method-icon {
+  font-size: 1.5rem;
+  margin-right: 12px;
+}
+
+.powered-by {
+  margin-top: 24px;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.summary-card {
+  background: white;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.summary-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+}
+
+.price-tag {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+  margin: 12px 0;
+}
+
+.benefits-list {
+  text-align: left;
+  list-style: none;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.benefits-list li {
+  margin-bottom: 8px;
+  color: var(--text-muted);
+}
+
+.btn-continue {
+  width: 100%;
+  padding: 12px;
+  background: var(--accent-green);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.payment-footer-warning {
+  padding: 16px 24px;
+  background: #fff8e1;
+  border-top: 1px solid #ffeeba;
+}
+
+.unlock-banner {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.lock-icon {
+  font-size: 1.5rem;
+}
+
+.mini-benefits {
+  list-style: none;
+  font-size: 0.85rem;
+  margin: 8px 0;
+  padding: 0;
+  color: #666;
+}
+
+.btn-unlock-full {
+  padding: 8px 16px;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.guarantee-text {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* ===== COURSE PLAYER ===== */
+.course-player-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #f0f2f5;
+  display: flex;
+  flex-direction: column;
+  z-index: 2000;
+  /* Above everything */
+  overflow: hidden;
+}
+
+.player-header {
+  height: 60px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.user-avatar img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.player-container {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 60px);
+}
+
+.player-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.video-wrapper {
+  background: #000;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: var(--radius-md);
+  position: relative;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  overflow: hidden;
+}
+
+.video-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.6;
+}
+
+.player-sidebar {
+  width: 320px;
+  background: white;
+  border-left: 1px solid #ddd;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.curriculum-header {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  background: #f8f9fa;
+}
+
+.course-progress {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.progress-bar {
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  margin: 8px 0;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: var(--accent-green);
+  height: 100%;
+}
+
+.lesson-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f1f1;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+}
+
+.lesson-item:hover {
+  background: #f9f9f9;
+}
+
+.lesson-status {
+  width: 24px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .payment-body {
+    flex-direction: column;
+  }
+
+  .payment-methods {
+    border-right: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  .payment-summary {
+    width: 100%;
+  }
+
+  .player-container {
+    flex-direction: column;
+  }
+
+  .player-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+  }
+
+  .course-player-page {
+    position: absolute;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+}
