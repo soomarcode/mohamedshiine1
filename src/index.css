@@ -78,7 +78,7 @@ img {
 }
 
 .header-logo .logo-img {
-  height: 70px;
+  height: 90px;
   width: auto;
   object-fit: contain;
 }
@@ -354,7 +354,7 @@ img {
 .courses-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
 .course-card {
@@ -377,7 +377,7 @@ img {
 
 .course-card-content {
   flex: 1;
-  padding: 16px 20px;
+  padding: 12px 16px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -410,16 +410,16 @@ img {
 }
 
 .course-card-header h3 {
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--text-dark);
 }
 
 .course-card-content p {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
-  margin-bottom: 16px;
-  line-height: 1.5;
+  margin-bottom: 10px;
+  line-height: 1.4;
 }
 
 .btn-course {
@@ -456,7 +456,7 @@ img {
 }
 
 .course-card-image {
-  width: 220px;
+  width: 180px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
