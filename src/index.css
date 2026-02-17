@@ -62,28 +62,27 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 16px;
+  padding: 0 16px;
   background: var(--bg-white);
   border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
   z-index: 100;
-  min-height: 70px;
-  /* Use min-height instead of fixed height */
+  height: 85px;
 }
 
 .header-logo {
   display: flex;
   align-items: center;
   gap: 8px;
+  height: 100%;
 }
 
 .header-logo .logo-img {
-  height: 120px;
-  /* Big logo */
+  height: 80px;
   width: auto;
   object-fit: contain;
-  margin-top: 4px;
+  display: block;
 }
 
 .header-logo .logo-icon {
@@ -515,13 +514,13 @@ img {
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .header {
-    padding: 4px 12px;
-    /* Reduced mobile padding */
+    padding: 0 12px;
+    height: 60px;
   }
 
   .header-logo .logo-img {
-    height: 80px;
-    /* Smaller but still big for mobile */
+    height: 55px;
+    /* Fits in 60px header */
   }
 
   .header-nav {
