@@ -980,6 +980,33 @@ img {
 .method-icon {
   font-size: 1.5rem;
   margin-right: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+}
+
+.evc-icon {
+  color: #16a34a;
+  /* Green */
+  background: #dcfce7;
+  font-size: 0.9rem;
+}
+
+.edahab-icon {
+  color: #ca8a04;
+  /* Gold */
+  background: #fef9c3;
+  font-size: 0.8rem;
+}
+
+.stripe-icon {
+  color: #2563eb;
+  /* Blue */
+  background: #dbeafe;
 }
 
 .powered-by {

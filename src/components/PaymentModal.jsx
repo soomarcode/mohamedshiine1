@@ -4,6 +4,16 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
     if (!isOpen || !course) return null;
 
     const [paymentMethod, setPaymentMethod] = useState('evc'); // evc, edahab, stripe
+    const [isProcessing, setIsProcessing] = useState(false);
+
+    const handlePayment = () => {
+        setIsProcessing(true);
+        // Simulate payment processing delay (e.g., waiting for USSD popup)
+        setTimeout(() => {
+            setIsProcessing(false);
+            onComplete();
+        }, 2000); // 2 seconds delay
+    };
 
     return (
         <div className="modal-overlay" onClick={onClose}>
@@ -25,7 +35,7 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
                             onClick={() => setPaymentMethod('evc')}
                         >
                             <div className="radio-circle">{paymentMethod === 'evc' && '✔'}</div>
-                            <span className="method-icon evc">EVC</span>
+                            <span className="method-icon evc-icon">EVC</span>
                             <span className="method-name">EVC Plus</span>
                         </div>
 
@@ -34,7 +44,7 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
                             onClick={() => setPaymentMethod('edahab')}
                         >
                             <div className="radio-circle">{paymentMethod === 'edahab' && '✔'}</div>
-                            <span className="method-icon edahab">Edahab</span>
+                            <span className="method-icon edahab-icon">Edahab</span>
                             <span className="method-name">Edahab</span>
                         </div>
 
@@ -43,7 +53,7 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
                             onClick={() => setPaymentMethod('stripe')}
                         >
                             <div className="radio-circle">{paymentMethod === 'stripe' && '✔'}</div>
-                            <span className="method-icon stripe">💳</span>
+                            <span className="method-icon stripe-icon">💳</span>
                             <span className="method-name">Stripe</span>
                             <div className="card-icons">
                                 <span>VISA</span> <span>MC</span>
@@ -66,7 +76,9 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
                                 <li>🔒 Secure Payment</li>
                             </ul>
 
-                            <button className="btn-continue" onClick={onComplete}>Continue</button>
+                            <button className="btn-continue" onClick={handlePayment} disabled={isProcessing}>
+                                {isProcessing ? 'Processing...' : 'Continue'}
+                            </button>
                             <p className="footer-secure">Secure payment powered by <strong>stripe</strong></p>
                         </div>
                     </div>
