@@ -68,7 +68,8 @@ img {
   position: sticky;
   top: 0;
   z-index: 100;
-  height: 80px;
+  min-height: 70px;
+  /* Use min-height instead of fixed height */
 }
 
 .header-logo {
@@ -78,9 +79,11 @@ img {
 }
 
 .header-logo .logo-img {
-  height: 90px;
+  height: 120px;
+  /* Big logo */
   width: auto;
   object-fit: contain;
+  margin-top: 4px;
 }
 
 .header-logo .logo-icon {
@@ -512,11 +515,17 @@ img {
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .header {
-    padding: 10px 16px;
+    padding: 4px 12px;
+    /* Reduced mobile padding */
+  }
+
+  .header-logo .logo-img {
+    height: 80px;
+    /* Smaller but still big for mobile */
   }
 
   .header-nav {
-    gap: 16px;
+    gap: 12px;
   }
 
   .header-nav a {
@@ -526,14 +535,16 @@ img {
   .hero-content {
     flex-direction: column;
     text-align: center;
-    padding: 32px 20px;
+    padding: 24px 16px;
+    gap: 20px;
   }
 
   .hero-text {
     max-width: 100%;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
   }
 
+  /* ... keep rest of responsive logic ... */
   .hero-text .hero-subtitle {
     justify-content: center;
   }
@@ -547,21 +558,24 @@ img {
   }
 
   .hero-image img {
-    width: 220px;
-    height: 260px;
+    width: 200px;
+    height: 230px;
   }
 
   .courses-section {
-    padding: 28px 16px 40px;
+    padding: 16px 12px 24px;
   }
 
+  /* ... */
   .courses-controls {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    gap: 16px;
   }
 
   .search-box input {
     width: 100%;
+    min-width: 280px;
   }
 
   .course-card {
@@ -570,27 +584,28 @@ img {
 
   .course-card-image {
     width: 100%;
-    height: 200px;
+    height: 160px;
   }
 
   .features-bar {
     flex-direction: column;
-    gap: 16px;
-    padding: 24px 16px;
+    gap: 12px;
+    padding: 16px 12px;
   }
 }
 
 @media (max-width: 480px) {
-  .header-logo {
-    font-size: 0.9rem;
+  .header-logo .logo-img {
+    height: 65px;
+    /* Adjust for very small screens */
   }
 
   .header-nav {
-    gap: 10px;
+    gap: 8px;
   }
 
   .btn-login {
-    padding: 6px 16px;
+    padding: 4px 12px;
     font-size: 0.8rem;
   }
 
