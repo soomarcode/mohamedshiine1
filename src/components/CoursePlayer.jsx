@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../supabase';
 import Header from './Header'; // Reuse header but customize?
 
 // Mock curriculum data

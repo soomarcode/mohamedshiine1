@@ -1,6 +1,14 @@
 import React from 'react';
+import { supabase } from '../supabase';
 
 export default function Header({ onLogin, user }) {
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+    };
+
+    const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+    const avatarUrl = user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${displayName}&background=28a745&color=fff`;
+
     return (
         <header className="header">
             <div className="header-logo">
@@ -11,12 +19,28 @@ export default function Header({ onLogin, user }) {
                 <a href="#courses">Courses</a>
                 <a href="#about">About</a>
                 {user ? (
-                    <div className="header-user" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{user.name}</span>
+                    <div className="header-user" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-dark)' }}>{displayName}</span>
+                            <button
+                                onClick={handleLogout}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    color: '#dc3545',
+                                    fontSize: '0.75rem',
+                                    cursor: 'pointer',
+                                    padding: 0,
+                                    textAlign: 'right'
+                                }}
+                            >
+                                Log Out
+                            </button>
+                        </div>
                         <img
-                            src={user.avatar}
-                            alt={user.name}
-                            style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }}
+                            src={avatarUrl}
+                            alt={displayName}
+                            style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #28a745' }}
                         />
                     </div>
                 ) : (

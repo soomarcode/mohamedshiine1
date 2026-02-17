@@ -12,9 +12,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [fullName, setFullName] = useState('');
-    const [verificationCode, setVerificationCode] = useState('');
     const [error, setError] = useState(null);
-    const [codeSent, setCodeSent] = useState(false);
 
     // Reset view when closing? handled by parent re-rendering or effect, 
     // but for now simple state is fine.
@@ -24,37 +22,10 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
         e.stopPropagation();
     };
 
-    const handleSendCode = async () => {
-        if (!email) {
-            setError('Please enter your email address first.');
-            return;
-        }
-        setLoading(true);
-        setError(null);
-        try {
-            const { error } = await supabase.auth.signInWithOtp({ email });
-            if (error) throw error;
-            setCodeSent(true);
-            alert(`Verification code sent to ${email}`);
-        } catch (err) {
-            if (err.message.includes('rate limit') || err.status === 429) {
-                setError('Too many attempts! Please wait 60 seconds before trying again.');
-            } else {
-                setError(err.message);
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const handleSignUp = async (e) => {
         e.preventDefault();
         setError(null);
 
-        if (!verificationCode) {
-            setError('Please enter the verification code sent to your email.');
-            return;
-        }
         if (password !== confirmPassword) {
             setError('Passwords do not match.');
             return;
@@ -62,27 +33,26 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
 
         setLoading(true);
         try {
-            // 1. Verify the OTP
-            // Use 'email' for 6-digit Email OTP
-            const { data, error: verifyError } = await supabase.auth.verifyOtp({
-                email: email.trim(),
-                token: verificationCode.trim(),
-                type: 'email',
+            // Standard signup which sends confirmation link
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        full_name: fullName,
+                    },
+                },
             });
 
-            if (verifyError) throw verifyError;
+            if (error) throw error;
 
-            // 2. If verified, user is logged in. Now set password and metadata.
+            // If signup successful, tell user to check email
             if (data.session) {
-                const { error: updateError } = await supabase.auth.updateUser({
-                    password: password,
-                    data: { full_name: fullName }
-                });
-
-                if (updateError) throw updateError;
-
-                // Success!
+                // If auto-logged in (rare if confirm is on), success
                 onLoginSuccess && onLoginSuccess();
+            } else {
+                alert('Success! Check your email for the confirmation link to log in.');
+                onClose();
             }
         } catch (err) {
             setError(err.message);
@@ -155,7 +125,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
                         <p className="modal-subtitle">Abuur account, hel koorsooyinka FREE-ga ah!</p>
 
                         {error && <p style={{ color: 'red', textAlign: 'center', fontSize: '0.9rem', marginBottom: '10px' }}>{error}</p>}
-                        {codeSent && <p style={{ color: 'green', textAlign: 'center', fontSize: '0.9rem', marginBottom: '10px' }}>Code sent! Check your email.</p>}
+
 
                         <form className="auth-form" onSubmit={handleSignUp}>
                             <div className="form-group">
@@ -169,7 +139,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
                                 />
                             </div>
 
-                            <div className="form-group with-action">
+                            <div className="form-group">
                                 <span className="input-icon">✉️</span>
                                 <input
                                     type="email"
@@ -177,20 +147,6 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                />
-                                <button type="button" className="btn-send-code" onClick={handleSendCode} disabled={loading}>
-                                    {loading && !codeSent ? 'Sending...' : (codeSent ? 'Resend Code' : 'Send Code')}
-                                </button>
-                            </div>
-
-                            <div className="form-group">
-                                <span className="input-icon">⚙️</span>
-                                <input
-                                    type="text"
-                                    placeholder="Confirmation Code"
-                                    value={verificationCode}
-                                    onChange={(e) => setVerificationCode(e.target.value)}
-                                    required={codeSent}
                                 />
                             </div>
 
@@ -228,7 +184,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
                             </div>
 
                             <button type="submit" className="btn-auth btn-signup-full" disabled={loading}>
-                                {loading && codeSent ? 'Verifying...' : 'Sign Up'}
+                                {loading ? 'Signing Up...' : 'Sign Up'}
                             </button>
                         </form>
 

@@ -24,12 +24,24 @@ function App() {
     });
 
     // Listen for changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+
+      if (event === 'SIGNED_IN') {
+        setIsModalOpen(false); // Close auth modal
+        // If we were waiting to access a course, do it now
+        if (currentCourse) {
+          processCourse(currentCourse);
+        }
+      } else if (event === 'SIGNED_OUT') {
+        setView('home');
+        setCurrentCourse(null);
+      }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [currentCourse]); // Re-bind if currentCourse changes to catch SIGNED_IN properly
 
   const openAuthModal = (view = 'select') => {
     setModalView(view);
