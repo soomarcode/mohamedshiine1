@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
 
-// Mock curriculum data
+// Mock curriculum data with YouTube IDs
 const lessons = [
-    { id: 1, title: 'Bilowga e-commerce ka', duration: '8:15', active: true, completed: false },
-    { id: 2, title: 'Suuqa iyo Dhiagaga Target ka', duration: '8:42', active: false, locked: true },
-    { id: 3, title: 'Side loo doortaa badeecada', duration: '7:36', active: false, locked: true },
-    { id: 4, title: 'Barashada Wordpress ka', duration: '8:06', active: false, locked: true },
-    { id: 5, title: 'Qiimaynta iyo Liisgareyta', duration: '9:40', active: false, locked: true },
-    { id: 6, title: 'Qabdhismeedka Product ka', duration: '7:45', active: false, locked: true },
-    { id: 7, title: 'Suuq geynta Digital ka', duration: '5:58', active: false, locked: true },
-    { id: 8, title: 'Maareynta Dalabka iyo Fulinta', duration: '12:52', active: false, locked: true },
-    { id: 9, title: 'Adeegsiga Aaladaha AI', duration: '9:15', active: false, locked: true },
+    { id: 1, title: 'Bilowga e-commerce ka', duration: '8:15', youtubeId: 'dQw4w9WgXcQ', active: true, completed: false },
+    { id: 2, title: 'Suuqa iyo Dhiagaga Target ka', duration: '8:42', youtubeId: 'dQw4w9WgXcQ', active: false, locked: true },
+    { id: 3, title: 'Side loo doortaa badeecada', duration: '7:36', youtubeId: 'dQw4w9WgXcQ', active: false, locked: true },
+    { id: 4, title: 'Barashada Wordpress ka', duration: '8:06', youtubeId: 'dQw4w9WgXcQ', active: false, locked: true },
+    { id: 5, title: 'Qiimaynta iyo Liisgareyta', duration: '9:40', youtubeId: 'dQw4w9WgXcQ', active: false, locked: true },
+    { id: 6, title: 'Qabdhismeedka Product ka', duration: '7:45', youtubeId: 'dQw4w9WgXcQ', active: false, locked: true },
+    { id: 7, title: 'Suuq geynta Digital ka', duration: '5:58', youtubeId: 'dQw4w9WgXcQ', active: false, locked: true },
+    { id: 8, title: 'Maareynta Dalabka iyo Fulinta', duration: '12:52', youtubeId: 'dQw4w9WgXcQ', active: false, locked: true },
+    { id: 9, title: 'Adeegsiga Aaladaha AI', duration: '9:15', youtubeId: 'dQw4w9WgXcQ', active: false, locked: true },
 ];
 
 const CoursePlayer = ({ course, onBack }) => {
@@ -62,20 +62,16 @@ const CoursePlayer = ({ course, onBack }) => {
 
                     <div className="video-wrapper">
                         <span className="badge-free">FREE</span>
-                        <img src={course.image} alt="Video Thumbnail" className="video-poster" />
-
-                        <div className="video-controls">
-                            <div className="control-left" style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                                <span style={{ fontSize: '1.2rem', cursor: 'pointer' }}>❚❚</span>
-                                <span style={{ fontSize: '1.2rem', cursor: 'pointer' }}>⏭</span>
-                                <span style={{ fontSize: '1.2rem', cursor: 'pointer' }}>🔉</span>
-                                <span style={{ fontSize: '0.9rem' }}>0:03 / {activeLesson.duration}</span>
-                            </div>
-                            <div className="control-right" style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                                <span style={{ fontSize: '1.2rem', cursor: 'pointer' }}>⚙</span>
-                                <span style={{ fontSize: '1.2rem', cursor: 'pointer' }}>⛶</span>
-                            </div>
-                        </div>
+                        <iframe
+                            width="100%"
+                            height="100%"
+                            src={`https://www.youtube.com/embed/${activeLesson.youtubeId}?rel=0&modestbranding=1`}
+                            title={activeLesson.title}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowFullScreen
+                            style={{ border: 'none', borderRadius: '12px' }}
+                        ></iframe>
                     </div>
 
                     <div className="lesson-info">
