@@ -31,6 +31,11 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
             return;
         }
 
+        if (!fullName.trim()) {
+            setError('Please enter your full name.');
+            return;
+        }
+
         setLoading(true);
         try {
             // Standard signup which sends confirmation link
@@ -38,6 +43,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
                 email,
                 password,
                 options: {
+                    emailRedirectTo: window.location.origin,
                     data: {
                         full_name: fullName,
                     },
@@ -51,8 +57,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
                 // If auto-logged in (rare if confirm is on), success
                 onLoginSuccess && onLoginSuccess();
             } else {
-                alert('Success! Check your email for the confirmation link to log in.');
-                onClose();
+                setView('success'); // Switch to a success view
             }
         } catch (err) {
             setError(err.message);
@@ -237,6 +242,18 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
                                 Don't have an account? <span className="link-login" onClick={() => setView('signup')}>Sign Up</span>
                             </p>
                         </div>
+                    </div>
+                )}
+                {view === 'success' && (
+                    <div className="modal-body success-view" style={{ textAlign: 'center', padding: '20px 0' }}>
+                        <div style={{ fontSize: '4rem', marginBottom: '20px' }}>📧</div>
+                        <h2 className="modal-title">Check your email!</h2>
+                        <p className="modal-subtitle">
+                            Waxaan kuu soo dirnay link-ga xaqiijinta. Fadlan check-garee email-kaaga <strong>{email}</strong> si aad u gasho site-ka.
+                        </p>
+                        <button className="btn-auth btn-signup-green" style={{ marginTop: '20px' }} onClick={onClose}>
+                            Gartay
+                        </button>
                     </div>
                 )}
             </div>
