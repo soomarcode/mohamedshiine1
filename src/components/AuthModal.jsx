@@ -59,10 +59,11 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
         setLoading(true);
         try {
             // 1. Verify the OTP
+            // type: 'magiclink' is correct for signInWithOtp flow
             const { data, error: verifyError } = await supabase.auth.verifyOtp({
                 email,
                 token: verificationCode,
-                type: 'email',
+                type: 'magiclink',
             });
 
             if (verifyError) throw verifyError;
