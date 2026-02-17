@@ -68,7 +68,8 @@ img {
   position: sticky;
   top: 0;
   z-index: 100;
-  height: 85px;
+  height: 90px;
+  /* Slight increase for bigger logo */
 }
 
 .header-logo {
@@ -79,11 +80,14 @@ img {
 }
 
 .header-logo .logo-img {
-  height: 80px;
+  height: 90px;
+  /* Max size */
   width: auto;
   object-fit: contain;
   display: block;
 }
+
+/* (Removed duplicate responsive block) */
 
 .header-logo .logo-icon {
   width: 36px;
@@ -519,8 +523,8 @@ img {
   }
 
   .header-logo .logo-img {
-    height: 55px;
-    /* Fits in 60px header */
+    height: 58px;
+    /* Adjusted to 58px */
   }
 
   .header-nav {
@@ -565,6 +569,8 @@ img {
     line-height: 1.25;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
+    /* Standard property */
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
