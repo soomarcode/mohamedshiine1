@@ -37,7 +37,11 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
             setCodeSent(true);
             alert(`Verification code sent to ${email}`);
         } catch (err) {
-            setError(err.message);
+            if (err.message.includes('rate limit') || err.status === 429) {
+                setError('Too many attempts! Please wait 60 seconds before trying again.');
+            } else {
+                setError(err.message);
+            }
         } finally {
             setLoading(false);
         }
