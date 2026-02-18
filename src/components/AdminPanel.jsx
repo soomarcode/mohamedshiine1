@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
 
 const AdminPanel = ({ onBack }) => {
+    const [view, setView] = useState('courses'); // 'courses' or 'lessons'
     const [courses, setCourses] = useState([]);
+    const [selectedCourse, setSelectedCourse] = useState(null);
+    const [lessons, setLessons] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isAdding, setIsAdding] = useState(false);
+    const [isAddingCourse, setIsAddingCourse] = useState(false);
+    const [isAddingLesson, setIsAddingLesson] = useState(false);
 
-    // Form state - using lowercase to avoid Postgres case issues
-    const [formData, setFormData] = useState({
+    // Course Form state
+    const [courseFormData, setCourseFormData] = useState({
         title: '',
         description: '',
         price: 0,
@@ -16,6 +20,16 @@ const AdminPanel = ({ onBack }) => {
         image: '',
         buttontext: 'Daawo Bilaash',
         youtube_id: 'dQw4w9WgXcQ'
+    });
+
+    // Lesson Form state
+    const [lessonFormData, setLessonFormData] = useState({
+        title: '',
+        duration: '',
+        youtube_id: '',
+        pdf_link: '',
+        resource_link: '',
+        order_index: 0
     });
 
     useEffect(() => {
@@ -29,20 +43,29 @@ const AdminPanel = ({ onBack }) => {
             .select('*')
             .order('id', { ascending: true });
 
-        if (error) {
-            console.error('Error fetching courses:', error);
-        } else {
-            setCourses(data || []);
-        }
+        if (error) console.error('Error fetching courses:', error);
+        else setCourses(data || []);
         setLoading(false);
     };
 
-    const handleInputChange = (e) => {
+    const fetchLessons = async (courseId) => {
+        setLoading(true);
+        const { data, error } = await supabase
+            .from('lessons')
+            .select('*')
+            .eq('course_id', courseId)
+            .order('order_index', { ascending: true });
+
+        if (error) console.error('Error fetching lessons:', error);
+        else setLessons(data || []);
+        setLoading(false);
+    };
+
+    const handleCourseInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
+        setCourseFormData(prev => ({
             ...prev,
             [name]: name === 'price' ? parseFloat(value) : value,
-            // Auto-set type based on price
             ...(name === 'price' ? {
                 type: parseFloat(value) > 0 ? 'paid' : 'free',
                 pricelabel: parseFloat(value) > 0 ? `$${value}` : 'FREE',
@@ -51,149 +74,166 @@ const AdminPanel = ({ onBack }) => {
         }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleCourseSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-
-        const { error } = await supabase
-            .from('courses')
-            .insert([formData]);
-
-        if (error) {
-            alert('Error adding course: ' + error.message);
-        } else {
-            alert('Course added successfully!');
-            setIsAdding(false);
-            setFormData({
-                title: '',
-                description: '',
-                price: 0,
-                pricelabel: 'FREE',
-                type: 'free',
-                image: '',
-                buttontext: 'Daawo Bilaash',
-                youtube_id: 'dQw4w9WgXcQ'
-            });
+        const { error } = await supabase.from('courses').insert([courseFormData]);
+        if (error) alert('Error: ' + error.message);
+        else {
+            alert('Course added!');
+            setIsAddingCourse(false);
+            setCourseFormData({ title: '', description: '', price: 0, pricelabel: 'FREE', type: 'free', image: '', buttontext: 'Daawo Bilaash', youtube_id: '' });
             fetchCourses();
         }
         setLoading(false);
     };
 
-    const deleteCourse = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this course?')) return;
-
-        const { error } = await supabase
-            .from('courses')
-            .delete()
-            .eq('id', id);
-
-        if (error) {
-            alert('Error deleting: ' + error.message);
-        } else {
-            fetchCourses();
+    const handleLessonSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        const { error } = await supabase.from('lessons').insert([{ ...lessonFormData, course_id: selectedCourse.id }]);
+        if (error) alert('Error: ' + error.message);
+        else {
+            alert('Lesson added!');
+            setIsAddingLesson(false);
+            setLessonFormData({ title: '', duration: '', youtube_id: '', pdf_link: '', resource_link: '', order_index: lessons.length + 1 });
+            fetchLessons(selectedCourse.id);
         }
+        setLoading(false);
+    };
+
+    const deleteCourse = async (id) => {
+        if (!window.confirm('Delete this course?')) return;
+        const { error } = await supabase.from('courses').delete().eq('id', id);
+        if (error) alert('Error: ' + error.message);
+        else fetchCourses();
+    };
+
+    const deleteLesson = async (id) => {
+        if (!window.confirm('Delete this lesson?')) return;
+        const { error } = await supabase.from('lessons').delete().eq('id', id);
+        if (error) alert('Error: ' + error.message);
+        else fetchLessons(selectedCourse.id);
+    };
+
+    const openLessons = (course) => {
+        setSelectedCourse(course);
+        setView('lessons');
+        fetchLessons(course.id);
+        setLessonFormData(prev => ({ ...prev, order_index: lessons.length + 1 }));
     };
 
     return (
-        <div className="admin-panel" style={{ padding: '40px 5%', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+        <div className="admin-panel" style={{ padding: '40px 5%', backgroundColor: '#f1f5f9', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
+            {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
                 <div>
-                    <h1 style={{ fontSize: '2rem', color: '#1e293b' }}>Admin Dashboard</h1>
-                    <p style={{ color: '#64748b' }}>Manage your courses and content</p>
-                </div>
-                <div style={{ display: 'flex', gap: '12px' }}>
-                    <button onClick={onBack} className="btn-auth btn-login-blue" style={{ backgroundColor: '#64748b' }}>
-                        Back to Site
-                    </button>
-                    <button onClick={() => setIsAdding(!isAdding)} className="btn-auth btn-signup-green">
-                        {isAdding ? 'Cancel' : '+ Add New Course'}
+                    <h1 style={{ fontSize: '1.8rem', color: '#1e293b' }}>
+                        {view === 'courses' ? 'Admin Dashboard - Courses' : `Lessons: ${selectedCourse?.title}`}
+                    </h1>
+                    <button onClick={view === 'courses' ? onBack : () => setView('courses')} style={{ background: 'none', border: 'none', color: '#15803d', cursor: 'pointer', fontWeight: 600, padding: 0 }}>
+                        {view === 'courses' ? '← Back to Site' : '← Back to Courses'}
                     </button>
                 </div>
+                <button onClick={() => view === 'courses' ? setIsAddingCourse(true) : setIsAddingLesson(true)} style={{ background: '#15803d', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>
+                    {view === 'courses' ? '+ Add New Course' : '+ Add New Lesson'}
+                </button>
             </div>
 
-            {isAdding && (
-                <div style={{ background: 'white', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', marginBottom: '40px' }}>
-                    <h2 style={{ marginBottom: '20px' }}>Add New Course</h2>
-                    <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                        <div className="form-group" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-                            <label style={{ marginBottom: '8px', fontWeight: 600 }}>Course Title</label>
-                            <input name="title" value={formData.title} onChange={handleInputChange} placeholder="e.g. E-Commerce Bilow" required style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
-                        </div>
-                        <div className="form-group" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-                            <label style={{ marginBottom: '8px', fontWeight: 600 }}>Price ($0 for Free)</label>
-                            <input name="price" type="number" value={formData.price} onChange={handleInputChange} required style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
-                        </div>
-                        <div className="form-group" style={{ flexDirection: 'column', alignItems: 'flex-start', gridColumn: 'span 2' }}>
-                            <label style={{ marginBottom: '8px', fontWeight: 600 }}>Description</label>
-                            <textarea name="description" value={formData.description} onChange={handleInputChange} rows="3" required style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}></textarea>
-                        </div>
-                        <div className="form-group" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-                            <label style={{ marginBottom: '8px', fontWeight: 600 }}>Image URL</label>
-                            <input name="image" value={formData.image} onChange={handleInputChange} placeholder="/images/course-name.png" required style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
-                        </div>
-                        <div className="form-group" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-                            <label style={{ marginBottom: '8px', fontWeight: 600 }}>Button Text</label>
-                            <input name="buttontext" value={formData.buttontext} onChange={handleInputChange} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
-                        </div>
-                        <div className="form-group" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-                            <label style={{ marginBottom: '8px', fontWeight: 600 }}>YouTube Video ID (unlisted)</label>
-                            <input name="youtube_id" value={formData.youtube_id} onChange={handleInputChange} placeholder="e.g. dQw4w9WgXcQ" required style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
-                        </div>
-                        <button type="submit" disabled={loading} className="btn-auth btn-signup-green" style={{ gridColumn: 'span 2', padding: '15px' }}>
-                            {loading ? 'Processing...' : 'Save Course to Database'}
-                        </button>
-                    </form>
+            {/* Course Form Modal */}
+            {isAddingCourse && (
+                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+                    <div style={{ background: 'white', padding: '30px', borderRadius: '12px', width: '500px', maxWidth: '90%' }}>
+                        <h3>Add New Course</h3>
+                        <form onSubmit={handleCourseSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
+                            <input name="title" placeholder="Course Title" onChange={handleCourseInputChange} required style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <textarea name="description" placeholder="Description" onChange={handleCourseInputChange} required style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input name="price" type="number" placeholder="Price (0 for Free)" onChange={handleCourseInputChange} required style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input name="image" placeholder="Image URL" onChange={handleCourseInputChange} required style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input name="youtube_id" placeholder="Main Promo YouTube ID" onChange={handleCourseInputChange} style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button type="submit" style={{ flex: 1, background: '#15803d', color: 'white', border: 'none', padding: '12px', borderRadius: '6px', cursor: 'pointer' }}>Save Course</button>
+                                <button type="button" onClick={() => setIsAddingCourse(false)} style={{ flex: 1, background: '#e2e8f0', border: 'none', padding: '12px', borderRadius: '6px', cursor: 'pointer' }}>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             )}
 
-            <div style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                    <thead>
-                        <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                            <th style={{ padding: '16px 20px' }}>Course</th>
-                            <th style={{ padding: '16px 20px' }}>Type</th>
-                            <th style={{ padding: '16px 20px' }}>Price</th>
-                            <th style={{ padding: '16px 20px' }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading && !isAdding ? (
-                            <tr><td colSpan="4" style={{ padding: '40px', textAlign: 'center' }}>Loading courses...</td></tr>
-                        ) : courses.length === 0 ? (
-                            <tr><td colSpan="4" style={{ padding: '40px', textAlign: 'center' }}>No courses found in database.</td></tr>
-                        ) : (
-                            courses.map(course => (
+            {/* Lesson Form Modal */}
+            {isAddingLesson && (
+                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+                    <div style={{ background: 'white', padding: '30px', borderRadius: '12px', width: '500px', maxWidth: '90%' }}>
+                        <h3>Add New Lesson to {selectedCourse.title}</h3>
+                        <form onSubmit={handleLessonSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
+                            <input name="title" placeholder="Lesson Title" onChange={(e) => setLessonFormData({ ...lessonFormData, title: e.target.value })} required style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input name="youtube_id" placeholder="YouTube Video ID" onChange={(e) => setLessonFormData({ ...lessonFormData, youtube_id: e.target.value })} required style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input name="duration" placeholder="Duration (e.g. 12:45)" onChange={(e) => setLessonFormData({ ...lessonFormData, duration: e.target.value })} style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input name="pdf_link" placeholder="PDF Resource Link (Optional)" onChange={(e) => setLessonFormData({ ...lessonFormData, pdf_link: e.target.value })} style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input name="resource_link" placeholder="Other Resource Link (Optional)" onChange={(e) => setLessonFormData({ ...lessonFormData, resource_link: e.target.value })} style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input name="order_index" type="number" placeholder="Order Index" defaultValue={lessons.length + 1} onChange={(e) => setLessonFormData({ ...lessonFormData, order_index: parseInt(e.target.value) })} style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button type="submit" style={{ flex: 1, background: '#15803d', color: 'white', border: 'none', padding: '12px', borderRadius: '6px', cursor: 'pointer' }}>Save Lesson</button>
+                                <button type="button" onClick={() => setIsAddingLesson(false)} style={{ flex: 1, background: '#e2e8f0', border: 'none', padding: '12px', borderRadius: '6px', cursor: 'pointer' }}>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Content Tables */}
+            <div style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+                {view === 'courses' ? (
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                            <tr>
+                                <th style={{ padding: '15px', textAlign: 'left' }}>Course</th>
+                                <th style={{ padding: '15px', textAlign: 'left' }}>Type</th>
+                                <th style={{ padding: '15px', textAlign: 'left' }}>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {courses.map(course => (
                                 <tr key={course.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                    <td style={{ padding: '16px 20px' }}>
+                                    <td style={{ hide: '15px', padding: '15px' }}>
                                         <div style={{ fontWeight: 600 }}>{course.title}</div>
-                                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{course.description.substring(0, 50)}...</div>
+                                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>ID: {course.id}</div>
                                     </td>
-                                    <td style={{ padding: '16px 20px' }}>
-                                        <span style={{
-                                            padding: '4px 8px',
-                                            borderRadius: '4px',
-                                            fontSize: '0.75rem',
-                                            fontWeight: 700,
-                                            background: course.type === 'free' ? '#dcfce7' : '#dbeafe',
-                                            color: course.type === 'free' ? '#16a34a' : '#2563eb'
-                                        }}>
-                                            {course.type.toUpperCase()}
-                                        </span>
+                                    <td style={{ padding: '15px' }}>
+                                        <span style={{ padding: '4px 8px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, background: course.type === 'free' ? '#dcfce7' : '#dbeafe', color: course.type === 'free' ? '#16a34a' : '#2563eb' }}>{course.type.toUpperCase()}</span>
                                     </td>
-                                    <td style={{ padding: '16px 20px', fontWeight: 600 }}>{course.pricelabel}</td>
-                                    <td style={{ padding: '16px 20px' }}>
-                                        <button
-                                            onClick={() => deleteCourse(course.id)}
-                                            style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontWeight: 600 }}
-                                        >
-                                            Delete
-                                        </button>
+                                    <td style={{ padding: '15px' }}>
+                                        <button onClick={() => openLessons(course)} style={{ background: '#1e293b', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', marginRight: '8px', cursor: 'pointer' }}>Manage Lessons</button>
+                                        <button onClick={() => deleteCourse(course.id)} style={{ color: '#ef4444', border: 'none', background: 'none', cursor: 'pointer', fontWeight: 600 }}>Delete</button>
                                     </td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                            ))}
+                        </tbody>
+                    </table>
+                ) : (
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                            <tr>
+                                <th style={{ padding: '15px', textAlign: 'left' }}>#</th>
+                                <th style={{ padding: '15px', textAlign: 'left' }}>Lesson Title</th>
+                                <th style={{ padding: '15px', textAlign: 'left' }}>YouTube ID</th>
+                                <th style={{ padding: '15px', textAlign: 'left' }}>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {lessons.map(lesson => (
+                                <tr key={lesson.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                                    <td style={{ padding: '15px' }}>{lesson.order_index}</td>
+                                    <td style={{ padding: '15px' }}>{lesson.title}</td>
+                                    <td style={{ padding: '15px', color: '#64748b' }}>{lesson.youtube_id}</td>
+                                    <td style={{ padding: '15px' }}>
+                                        <button onClick={() => deleteLesson(lesson.id)} style={{ color: '#ef4444', border: 'none', background: 'none', cursor: 'pointer', fontWeight: 600 }}>Remove</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
             </div>
         </div>
     );
