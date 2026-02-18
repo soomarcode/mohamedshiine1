@@ -1233,17 +1233,19 @@ img {
   gap: 8px;
 }
 
-.btn-next-lesson {
-  background: #e2e8f0;
-  color: #1e293b;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.btn-mark-complete.completed {
+  background: #22c55e;
+  cursor: default;
+}
+
+.btn-mark-complete:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-next-lesson:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .player-accordion {
@@ -1410,6 +1412,15 @@ img {
 .lesson-duration {
   font-size: 0.8rem;
   color: #94a3b8;
+}
+
+.lesson-item.is-completed {
+  background: #f0fdf4;
+}
+
+.lesson-item.is-completed .lesson-status {
+  color: #15803d;
+  font-weight: bold;
 }
 
 .lesson-item.locked {

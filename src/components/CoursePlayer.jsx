@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
 
-
 const CoursePlayer = ({ course, onBack }) => {
     const [lessons, setLessons] = useState([]);
     const [activeLesson, setActiveLesson] = useState(null);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [completedLessons, setCompletedLessons] = useState([]);
 
     useEffect(() => {
         const loadInitialData = async () => {
@@ -16,7 +16,7 @@ const CoursePlayer = ({ course, onBack }) => {
             const { data: { user: currentUser } } = await supabase.auth.getUser();
             setUser(currentUser);
 
-            // Fetch REAL lessons for this course from Supabase
+            // Fetch REAL lessons for this course
             const { data: lessonsData, error } = await supabase
                 .from('lessons')
                 .select('*')
@@ -31,9 +31,14 @@ const CoursePlayer = ({ course, onBack }) => {
                 setLessons(lessonsData);
                 setActiveLesson(lessonsData[0]);
             } else {
-                // If no lessons exist in DB for this course yet, clear state
                 setLessons([]);
                 setActiveLesson(null);
+            }
+
+            // Load completion status from local storage for now (or Supabase if table exists)
+            const savedProgress = localStorage.getItem(`course_progress_${course.id}`);
+            if (savedProgress) {
+                setCompletedLessons(JSON.parse(savedProgress));
             }
 
             setLoading(false);
@@ -42,12 +47,38 @@ const CoursePlayer = ({ course, onBack }) => {
         loadInitialData();
     }, [course.id]);
 
+    const handleMarkComplete = () => {
+        if (!activeLesson) return;
+
+        const newCompleted = [...completedLessons];
+        if (!newCompleted.includes(activeLesson.id)) {
+            newCompleted.push(activeLesson.id);
+            setCompletedLessons(newCompleted);
+            localStorage.setItem(`course_progress_${course.id}`, JSON.stringify(newCompleted));
+        }
+    };
+
+    const handleNextLesson = () => {
+        if (!activeLesson) return;
+        const currentIndex = lessons.findIndex(l => l.id === activeLesson.id);
+        if (currentIndex < lessons.length - 1) {
+            setActiveLesson(lessons[currentIndex + 1]);
+        }
+    };
+
+    const calculateProgress = () => {
+        if (lessons.length === 0) return 0;
+        return Math.round((completedLessons.length / lessons.length) * 100);
+    };
+
     const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Member';
     const avatarUrl = user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${displayName}&background=15803d&color=fff`;
 
     if (loading) {
         return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f1f5f9' }}>Soo raraya...</div>;
     }
+
+    const currentProgress = calculateProgress();
 
     return (
         <div className="course-player-page">
@@ -68,7 +99,7 @@ const CoursePlayer = ({ course, onBack }) => {
             <div className="player-container">
                 <div className="player-content">
                     <div className="breadcrumbs">
-                        <span>Courses</span> / <span>{course.title}</span> / <span className="current">{activeLesson?.title}</span>
+                        <span>Courses</span> / <span>{course.title}</span> / <span className="current">{activeLesson?.title || 'Cashar lama helin'}</span>
                     </div>
 
                     <div className="video-wrapper">
@@ -85,17 +116,31 @@ const CoursePlayer = ({ course, onBack }) => {
                                 style={{ border: 'none', borderRadius: '12px' }}
                             ></iframe>
                         ) : (
-                            <div style={{ color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>Video looma helin</div>
+                            <div style={{ color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', background: '#000', borderRadius: '12px' }}>
+                                Video looma helin casharkaan
+                            </div>
                         )}
                     </div>
 
                     <div className="lesson-info">
-                        <h2>{activeLesson?.title}</h2>
+                        <h2>{activeLesson?.title || 'No active lesson'}</h2>
                         <p className="enrollment-status">Waxaad hadda si rasmi ah ugu qoran tahay course-kan.</p>
 
                         <div className="lesson-actions">
-                            <button className="btn-mark-complete"><span>✔</span> Mark Complete</button>
-                            <button className="btn-next-lesson"><span>▶</span> Next Lesson</button>
+                            <button
+                                className={`btn-mark-complete ${completedLessons.includes(activeLesson?.id) ? 'completed' : ''}`}
+                                onClick={handleMarkComplete}
+                                disabled={!activeLesson || completedLessons.includes(activeLesson?.id)}
+                            >
+                                <span>{completedLessons.includes(activeLesson?.id) ? '✔ Completed' : '✔ Mark Complete'}</span>
+                            </button>
+                            <button
+                                className="btn-next-lesson"
+                                onClick={handleNextLesson}
+                                disabled={!activeLesson || lessons.findIndex(l => l.id === activeLesson.id) === lessons.length - 1}
+                            >
+                                <span>▶ Next Lesson</span>
+                            </button>
                         </div>
                     </div>
 
@@ -134,19 +179,21 @@ const CoursePlayer = ({ course, onBack }) => {
                             <div className="progress-header">
                                 <span style={{ fontSize: '0.8rem', color: '#64748b' }}>{course.title}</span>
                                 <div className="progress-bar-wrap">
-                                    <div className="progress-bar-fill" style={{ width: '0%' }}></div>
+                                    <div className="progress-bar-fill" style={{ width: `${currentProgress}%` }}></div>
                                 </div>
-                                <span className="progress-status">0% COMPLETE</span>
+                                <span className="progress-status">{currentProgress}% COMPLETE</span>
                             </div>
                         </div>
                         <ul className="lesson-list">
                             {lessons.map((lesson, index) => (
                                 <li
                                     key={lesson.id}
-                                    className={`lesson-item ${activeLesson?.id === lesson.id ? 'active' : ''}`}
+                                    className={`lesson-item ${activeLesson?.id === lesson.id ? 'active' : ''} ${completedLessons.includes(lesson.id) ? 'is-completed' : ''}`}
                                     onClick={() => setActiveLesson(lesson)}
                                 >
-                                    <span className="lesson-status">{activeLesson?.id === lesson.id ? '▶' : (index + 1)}</span>
+                                    <span className="lesson-status">
+                                        {completedLessons.includes(lesson.id) ? '✔' : (activeLesson?.id === lesson.id ? '▶' : (index + 1))}
+                                    </span>
                                     <div className="lesson-info-row">
                                         <span className="lesson-title-text">{lesson.title}</span>
                                         <span className="lesson-duration">{lesson.duration || '0:00'}</span>
