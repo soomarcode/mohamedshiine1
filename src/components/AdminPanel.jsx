@@ -6,15 +6,16 @@ const AdminPanel = ({ onBack }) => {
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
 
-    // Form state
+    // Form state - using lowercase to avoid Postgres case issues
     const [formData, setFormData] = useState({
         title: '',
         description: '',
         price: 0,
-        priceLabel: 'FREE',
+        pricelabel: 'FREE',
         type: 'free',
         image: '',
-        buttonText: 'Daawo Bilaash'
+        buttontext: 'Daawo Bilaash',
+        youtube_id: 'dQw4w9WgXcQ'
     });
 
     useEffect(() => {
@@ -44,8 +45,8 @@ const AdminPanel = ({ onBack }) => {
             // Auto-set type based on price
             ...(name === 'price' ? {
                 type: parseFloat(value) > 0 ? 'paid' : 'free',
-                priceLabel: parseFloat(value) > 0 ? `$${value}` : 'FREE',
-                buttonText: parseFloat(value) > 0 ? 'Faahfaahin' : 'Daawo Bilaash'
+                pricelabel: parseFloat(value) > 0 ? `$${value}` : 'FREE',
+                buttontext: parseFloat(value) > 0 ? 'Faahfaahin' : 'Daawo Bilaash'
             } : {})
         }));
     };
@@ -67,10 +68,11 @@ const AdminPanel = ({ onBack }) => {
                 title: '',
                 description: '',
                 price: 0,
-                priceLabel: 'FREE',
+                pricelabel: 'FREE',
                 type: 'free',
                 image: '',
-                buttonText: 'Daawo Bilaash'
+                buttontext: 'Daawo Bilaash',
+                youtube_id: 'dQw4w9WgXcQ'
             });
             fetchCourses();
         }
@@ -131,7 +133,11 @@ const AdminPanel = ({ onBack }) => {
                         </div>
                         <div className="form-group" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
                             <label style={{ marginBottom: '8px', fontWeight: 600 }}>Button Text</label>
-                            <input name="buttonText" value={formData.buttonText} onChange={handleInputChange} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                            <input name="buttontext" value={formData.buttontext} onChange={handleInputChange} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                        </div>
+                        <div className="form-group" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+                            <label style={{ marginBottom: '8px', fontWeight: 600 }}>YouTube Video ID (unlisted)</label>
+                            <input name="youtube_id" value={formData.youtube_id} onChange={handleInputChange} placeholder="e.g. dQw4w9WgXcQ" required style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
                         </div>
                         <button type="submit" disabled={loading} className="btn-auth btn-signup-green" style={{ gridColumn: 'span 2', padding: '15px' }}>
                             {loading ? 'Processing...' : 'Save Course to Database'}
@@ -174,7 +180,7 @@ const AdminPanel = ({ onBack }) => {
                                             {course.type.toUpperCase()}
                                         </span>
                                     </td>
-                                    <td style={{ padding: '16px 20px', fontWeight: 600 }}>{course.priceLabel}</td>
+                                    <td style={{ padding: '16px 20px', fontWeight: 600 }}>{course.pricelabel}</td>
                                     <td style={{ padding: '16px 20px' }}>
                                         <button
                                             onClick={() => deleteCourse(course.id)}
