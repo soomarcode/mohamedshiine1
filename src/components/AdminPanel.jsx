@@ -9,6 +9,7 @@ const AdminPanel = ({ onBack }) => {
     const [loading, setLoading] = useState(true);
     const [isAddingCourse, setIsAddingCourse] = useState(false);
     const [isAddingLesson, setIsAddingLesson] = useState(false);
+    const [imageFile, setImageFile] = useState(null);
 
     // Course Form state
     const [courseFormData, setCourseFormData] = useState({
@@ -74,18 +75,54 @@ const AdminPanel = ({ onBack }) => {
         }));
     };
 
+    const uploadImage = async (file) => {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError, data } = await supabase.storage
+            .from('course-images')
+            .upload(filePath, file);
+
+        if (uploadError) {
+            throw uploadError;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+            .from('course-images')
+            .getPublicUrl(filePath);
+
+        return publicUrl;
+    };
+
     const handleCourseSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        const { error } = await supabase.from('courses').insert([courseFormData]);
-        if (error) alert('Error: ' + error.message);
-        else {
+
+        try {
+            let imageUrl = courseFormData.image;
+
+            if (imageFile) {
+                imageUrl = await uploadImage(imageFile);
+            }
+
+            const { error } = await supabase.from('courses').insert([{
+                ...courseFormData,
+                image: imageUrl
+            }]);
+
+            if (error) throw error;
+
             alert('Course added!');
             setIsAddingCourse(false);
-            setCourseFormData({ title: '', description: '', price: 0, pricelabel: 'FREE', type: 'free', image: '', buttontext: 'Daawo Bilaash', youtube_id: '' });
+            setCourseFormData({ title: '', description: '', price: 0, pricelabel: 'FREE', type: 'free', image: '', buttontext: 'Daawo Bilaash', youtube_id: 'dQw4w9WgXcQ' });
+            setImageFile(null);
             fetchCourses();
+        } catch (error) {
+            alert('Error: ' + error.message);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const handleLessonSubmit = async (e) => {
@@ -149,7 +186,17 @@ const AdminPanel = ({ onBack }) => {
                             <input name="title" placeholder="Course Title" onChange={handleCourseInputChange} required style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
                             <textarea name="description" placeholder="Description" onChange={handleCourseInputChange} required style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
                             <input name="price" type="number" placeholder="Price (0 for Free)" onChange={handleCourseInputChange} required style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                            <input name="image" placeholder="Image URL" onChange={handleCourseInputChange} required style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <label style={{ fontSize: '0.9rem', fontWeight: 600 }}>Course Thumbnail</label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => setImageFile(e.target.files[0])}
+                                    required={!courseFormData.image}
+                                    style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px', background: '#f8fafc' }}
+                                />
+                                {imageFile && <p style={{ fontSize: '0.8rem', color: '#15803d' }}>Selected: {imageFile.name}</p>}
+                            </div>
                             <input name="youtube_id" placeholder="Main Promo YouTube ID" onChange={handleCourseInputChange} style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
                             <div style={{ display: 'flex', gap: '10px' }}>
                                 <button type="submit" style={{ flex: 1, background: '#15803d', color: 'white', border: 'none', padding: '12px', borderRadius: '6px', cursor: 'pointer' }}>Save Course</button>
