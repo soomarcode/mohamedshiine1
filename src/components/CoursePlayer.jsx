@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
 
-// This will be used if no lessons are found in the DB
-const fallbackLessons = [
-    { id: 1, title: 'Biloowga Course-ka', duration: '5:00', youtube_id: 'dQw4w9WgXcQ', order_index: 1 }
-];
 
 const CoursePlayer = ({ course, onBack }) => {
     const [lessons, setLessons] = useState([]);
@@ -29,15 +25,15 @@ const CoursePlayer = ({ course, onBack }) => {
 
             if (error) {
                 console.error('Error fetching lessons:', error);
-                setLessons(fallbackLessons);
-                setActiveLesson(fallbackLessons[0]);
+                setLessons([]);
+                setActiveLesson(null);
             } else if (lessonsData && lessonsData.length > 0) {
                 setLessons(lessonsData);
                 setActiveLesson(lessonsData[0]);
             } else {
-                // If no lessons exist in DB for this course yet, show fallback
-                setLessons(fallbackLessons);
-                setActiveLesson(fallbackLessons[0]);
+                // If no lessons exist in DB for this course yet, clear state
+                setLessons([]);
+                setActiveLesson(null);
             }
 
             setLoading(false);
@@ -157,6 +153,12 @@ const CoursePlayer = ({ course, onBack }) => {
                                     </div>
                                 </li>
                             ))}
+                            {lessons.length === 0 && (
+                                <div style={{ padding: '30px 20px', textAlign: 'center', color: '#64748b' }}>
+                                    <p style={{ fontWeight: 600 }}>No lessons added yet.</p>
+                                    <p style={{ fontSize: '0.8rem', marginTop: '5px' }}>Check back soon!</p>
+                                </div>
+                            )}
                         </ul>
                     </div>
                 </div>

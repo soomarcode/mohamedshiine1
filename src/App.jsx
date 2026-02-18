@@ -50,6 +50,7 @@ function App() {
   };
 
   const handleCourseClick = (course) => {
+    console.log('Selected Course:', course); // Debugging
     setCurrentCourse(course);
     if (!user) {
       openAuthModal('signup');
@@ -59,6 +60,7 @@ function App() {
   };
 
   const processCourse = (course) => {
+    if (!course) return;
     if (course.type === 'free') {
       setView('player');
     } else {
