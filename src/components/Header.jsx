@@ -6,7 +6,7 @@ export default function Header({ onLogin, user, onAdminClick }) {
         await supabase.auth.signOut();
     };
 
-    const isAdmin = user?.email === 'admin@mohamedshiine.com' || user?.user_metadata?.role === 'admin';
+    const isAdmin = user?.email === 'soomarcode@gmail.com' || user?.user_metadata?.role === 'admin';
     const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
     const avatarUrl = user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${displayName}&background=28a745&color=fff`;
 
