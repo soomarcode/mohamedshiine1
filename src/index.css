@@ -369,25 +369,14 @@ img {
 
 /* ===== COURSE CARD ===== */
 .courses-list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  /* 2 columns for better proportion */
-  gap: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-@media (max-width: 1200px) {
-  .courses-list {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-}
 
-@media (max-width: 768px) {
-  .courses-list {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-}
+
+
 
 .course-card {
   display: flex;
