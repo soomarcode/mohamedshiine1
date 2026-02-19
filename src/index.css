@@ -503,15 +503,6 @@ img {
   object-fit: cover;
 }
 
-overflow: hidden;
-}
-
-.course-card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 /* ===== FEATURES / FOOTER ===== */
 .features-bar {
   display: flex;
