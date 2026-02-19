@@ -27,18 +27,19 @@ export default function Courses({ onCourseClick }) {
     }, []);
 
     const filteredCourses = useMemo(() => {
+        if (!coursesData) return [];
         return coursesData.filter((course) => {
             const matchesFilter =
                 filter === 'all' ||
                 (filter === 'free' && course.type === 'free') ||
                 (filter === 'paid' && course.type === 'paid');
             const matchesSearch =
-                search === '' ||
+                search.trim() === '' ||
                 course.title.toLowerCase().includes(search.toLowerCase()) ||
-                course.description.toLowerCase().includes(search.toLowerCase());
+                (course.description && course.description.toLowerCase().includes(search.toLowerCase()));
             return matchesFilter && matchesSearch;
         });
-    }, [filter, search]);
+    }, [filter, search, coursesData]);
 
     return (
         <section className="courses-wrapper">
