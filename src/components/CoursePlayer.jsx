@@ -8,6 +8,17 @@ const CoursePlayer = ({ course, onBack }) => {
     const [loading, setLoading] = useState(true);
     const [completedLessons, setCompletedLessons] = useState([]);
 
+    // Helper to extract YouTube ID from URL
+    const extractYouTubeId = (input) => {
+        if (!input) return '';
+        const trimmed = input.trim();
+        const regex = /(?:https?:\/\/)?(?:www\.|m\.|music\.)?(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|watch\?v=|shorts\/)|youtu\.be\/|youtube-nocookie\.com\/embed\/)([a-zA-Z0-9_-]{11})/i;
+        const match = trimmed.match(regex);
+        if (match && match[1]) return match[1];
+        if (trimmed.length === 11 && !trimmed.includes('/') && !trimmed.includes('?')) return trimmed;
+        return '';
+    };
+
     useEffect(() => {
         const loadInitialData = async () => {
             setLoading(true);
@@ -108,7 +119,7 @@ const CoursePlayer = ({ course, onBack }) => {
                             <iframe
                                 width="100%"
                                 height="100%"
-                                src={`https://www.youtube.com/embed/${activeLesson.youtube_id}?rel=0&modestbranding=1`}
+                                src={`https://www.youtube.com/embed/${extractYouTubeId(activeLesson.youtube_id)}?rel=0&modestbranding=1`}
                                 title={activeLesson.title}
                                 frameBorder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -139,7 +150,7 @@ const CoursePlayer = ({ course, onBack }) => {
                                 onClick={handleNextLesson}
                                 disabled={!activeLesson || lessons.findIndex(l => l.id === activeLesson.id) === lessons.length - 1}
                             >
-                                <span>▶ Next Lesson</span>
+                                <span>🎥 Casharka {(lessons.findIndex(l => l.id === activeLesson?.id) + 2)}aad</span>
                             </button>
                         </div>
                     </div>
@@ -185,21 +196,27 @@ const CoursePlayer = ({ course, onBack }) => {
                             </div>
                         </div>
                         <ul className="lesson-list">
-                            {lessons.map((lesson, index) => (
-                                <li
-                                    key={lesson.id}
-                                    className={`lesson-item ${activeLesson?.id === lesson.id ? 'active' : ''} ${completedLessons.includes(lesson.id) ? 'is-completed' : ''}`}
-                                    onClick={() => setActiveLesson(lesson)}
-                                >
-                                    <span className="lesson-status">
-                                        {completedLessons.includes(lesson.id) ? '✔' : (activeLesson?.id === lesson.id ? '▶' : (index + 1))}
-                                    </span>
-                                    <div className="lesson-info-row">
-                                        <span className="lesson-title-text">{lesson.title}</span>
-                                        <span className="lesson-duration">{lesson.duration || '0:00'}</span>
-                                    </div>
-                                </li>
-                            ))}
+                            {lessons.map((lesson, index) => {
+                                const isActive = activeLesson?.id === lesson.id;
+                                const isCompleted = completedLessons.includes(lesson.id);
+                                const isLocked = false; // Add logic if you want to lock following lessons
+
+                                return (
+                                    <li
+                                        key={lesson.id}
+                                        className={`lesson-item ${isActive ? 'active' : ''} ${isCompleted ? 'is-completed' : ''} ${isLocked ? 'locked' : ''}`}
+                                        onClick={() => !isLocked && setActiveLesson(lesson)}
+                                    >
+                                        <span className="lesson-status">
+                                            {isCompleted ? '✔' : (isActive ? '▶' : (isLocked ? '🔒' : (index + 1)))}
+                                        </span>
+                                        <div className="lesson-info-row">
+                                            <span className="lesson-title-text">{lesson.title}</span>
+                                            <span className="lesson-duration">{lesson.duration || '0:00'}</span>
+                                        </div>
+                                    </li>
+                                );
+                            })}
                             {lessons.length === 0 && (
                                 <div style={{ padding: '30px 20px', textAlign: 'center', color: '#64748b' }}>
                                     <p style={{ fontWeight: 600 }}>No lessons added yet.</p>

@@ -10,37 +10,44 @@ export default function Header({ onLogin, user, onAdminClick }) {
     const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
     const avatarUrl = user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${displayName}&background=28a745&color=fff`;
 
+    const [menuActive, setMenuActive] = React.useState(false);
+
     return (
         <header className="header">
             <div className="header-logo">
                 <img src="/images/logo.png" alt="MohamedShiine.com" className="logo-img" />
             </div>
-            <nav className="header-nav">
-                <a href="#home">Home</a>
-                <a href="#courses">Courses</a>
-                <a href="#about">About</a>
+
+            <button className="mobile-menu-toggle" onClick={() => setMenuActive(!menuActive)}>
+                {menuActive ? '✕' : '☰'}
+            </button>
+
+            <nav className={`header-nav ${menuActive ? 'active' : ''}`}>
+                <a href="#home" onClick={() => setMenuActive(false)}>Home</a>
+                <a href="#courses" onClick={() => setMenuActive(false)}>Courses</a>
+                <a href="#about" onClick={() => setMenuActive(false)}>About</a>
                 {isAdmin && (
                     <button
-                        onClick={onAdminClick}
-                        style={{ background: '#1e293b', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', fontSize: '0.8rem', cursor: 'pointer', fontWeight: 600 }}
+                        onClick={() => { onAdminClick(); setMenuActive(false); }}
+                        style={{ background: '#1e293b', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '4px', fontSize: '0.9rem', cursor: 'pointer', fontWeight: 600, width: '100%' }}
                     >
-                        Admin
+                        Admin Panel
                     </button>
                 )}
                 {user ? (
-                    <div className="header-user" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column' }}>
-                            <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-dark)' }}>{displayName}</span>
+                    <div className="header-user">
+                        <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--text-dark)' }}>{displayName}</span>
                             <button
                                 onClick={handleLogout}
                                 style={{
                                     background: 'none',
                                     border: 'none',
                                     color: '#dc3545',
-                                    fontSize: '0.75rem',
+                                    fontSize: '0.85rem',
                                     cursor: 'pointer',
-                                    padding: 0,
-                                    textAlign: 'right'
+                                    padding: '4px 0',
+                                    textAlign: 'left'
                                 }}
                             >
                                 Log Out
@@ -49,11 +56,11 @@ export default function Header({ onLogin, user, onAdminClick }) {
                         <img
                             src={avatarUrl}
                             alt={displayName}
-                            style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #28a745' }}
+                            style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #28a745' }}
                         />
                     </div>
                 ) : (
-                    <button className="btn-login" onClick={onLogin}>Login</button>
+                    <button className="btn-login" style={{ width: '100%' }} onClick={() => { onLogin(); setMenuActive(false); }}>Login</button>
                 )}
             </nav>
         </header>
