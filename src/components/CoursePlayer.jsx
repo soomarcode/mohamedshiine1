@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
 
-const CoursePlayer = ({ course, onBack }) => {
+const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
     const [lessons, setLessons] = useState([]);
     const [activeLesson, setActiveLesson] = useState(null);
     const [user, setUser] = useState(null);
@@ -133,26 +133,36 @@ const CoursePlayer = ({ course, onBack }) => {
                         )}
                     </div>
 
-                    <div className="lesson-info">
-                        <h2>{activeLesson?.title || 'No active lesson'}</h2>
-                        <p className="enrollment-status">Waxaad hadda si rasmi ah ugu qoran tahay course-kan.</p>
+                    <h2>{activeLesson?.title || 'No active lesson'}</h2>
+                    <p className="enrollment-status">
+                        {isPreviewMode
+                            ? 'Waxaad hadda ku jirtaa Preview mode. Is qor si aad u hesho koorsada oo dhan.'
+                            : 'Waxaad hadda si rasmi ah ugu qoran tahay course-kan.'}
+                    </p>
 
-                        <div className="lesson-actions">
-                            <button
-                                className={`btn-mark-complete ${completedLessons.includes(activeLesson?.id) ? 'completed' : ''}`}
-                                onClick={handleMarkComplete}
-                                disabled={!activeLesson || completedLessons.includes(activeLesson?.id)}
-                            >
-                                <span>{completedLessons.includes(activeLesson?.id) ? '✔ Completed' : '✔ Mark Complete'}</span>
+                    <div className="lesson-actions">
+                        {isPreviewMode ? (
+                            <button className="btn-enroll-now" onClick={onEnroll}>
+                                🚀 Is-qor hadda (${course.price})
                             </button>
-                            <button
-                                className="btn-next-lesson"
-                                onClick={handleNextLesson}
-                                disabled={!activeLesson || lessons.findIndex(l => l.id === activeLesson.id) === lessons.length - 1}
-                            >
-                                <span>🎥 Casharka {(lessons.findIndex(l => l.id === activeLesson?.id) + 2)}aad</span>
-                            </button>
-                        </div>
+                        ) : (
+                            <>
+                                <button
+                                    className={`btn-mark-complete ${completedLessons.includes(activeLesson?.id) ? 'completed' : ''}`}
+                                    onClick={handleMarkComplete}
+                                    disabled={!activeLesson || completedLessons.includes(activeLesson?.id)}
+                                >
+                                    <span>{completedLessons.includes(activeLesson?.id) ? '✔ Completed' : '✔ Mark Complete'}</span>
+                                </button>
+                                <button
+                                    className="btn-next-lesson"
+                                    onClick={handleNextLesson}
+                                    disabled={!activeLesson || lessons.findIndex(l => l.id === activeLesson.id) === lessons.length - 1}
+                                >
+                                    <span>🎥 Casharka {(lessons.findIndex(l => l.id === activeLesson?.id) + 2)}aad</span>
+                                </button>
+                            </>
+                        )}
                     </div>
 
                     <div className="player-accordion">
@@ -199,13 +209,13 @@ const CoursePlayer = ({ course, onBack }) => {
                             {lessons.map((lesson, index) => {
                                 const isActive = activeLesson?.id === lesson.id;
                                 const isCompleted = completedLessons.includes(lesson.id);
-                                const isLocked = false; // Add logic if you want to lock following lessons
+                                const isLocked = isPreviewMode && index > 0; // Only first lesson unlocked in preview
 
                                 return (
                                     <li
                                         key={lesson.id}
                                         className={`lesson-item ${isActive ? 'active' : ''} ${isCompleted ? 'is-completed' : ''} ${isLocked ? 'locked' : ''}`}
-                                        onClick={() => !isLocked && setActiveLesson(lesson)}
+                                        onClick={() => isLocked ? onEnroll() : setActiveLesson(lesson)}
                                     >
                                         <span className="lesson-status">
                                             {isCompleted ? '✔' : (isActive ? '▶' : (isLocked ? '🔒' : (index + 1)))}

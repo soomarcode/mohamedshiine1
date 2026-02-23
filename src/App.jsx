@@ -17,6 +17,7 @@ function App() {
   const [currentCourse, setCurrentCourse] = useState(null);
   const [view, setView] = useState('home'); // 'home', 'player', 'admin'
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   useEffect(() => {
     // Check active session
@@ -52,11 +53,18 @@ function App() {
   const handleCourseClick = (course) => {
     console.log('Selected Course:', course); // Debugging
     setCurrentCourse(course);
+    setIsPreviewMode(false); // Reset preview mode
     if (!user) {
       openAuthModal('signup');
     } else {
       processCourse(course);
     }
+  };
+
+  const handlePreviewClick = (course) => {
+    setCurrentCourse(course);
+    setIsPreviewMode(true);
+    setView('player');
   };
 
   const processCourse = (course) => {
@@ -82,7 +90,14 @@ function App() {
   };
 
   if (view === 'player' && currentCourse) {
-    return <CoursePlayer course={currentCourse} onBack={() => setView('home')} />;
+    return (
+      <CoursePlayer
+        course={currentCourse}
+        isPreviewMode={isPreviewMode}
+        onBack={() => setView('home')}
+        onEnroll={() => setIsPaymentOpen(true)}
+      />
+    );
   }
 
   if (view === 'admin') {
@@ -97,7 +112,7 @@ function App() {
         onAdminClick={() => setView('admin')}
       />
       <Hero onCtaClick={() => openAuthModal('select')} />
-      <Courses onCourseClick={handleCourseClick} />
+      <Courses onCourseClick={handleCourseClick} onPreviewClick={handlePreviewClick} />
       <FeaturesBar />
 
       <AuthModal

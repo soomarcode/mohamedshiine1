@@ -10,7 +10,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const [whatsapp, setWhatsapp] = useState('');
     const [fullName, setFullName] = useState('');
     const [error, setError] = useState(null);
 
@@ -26,8 +26,8 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
         e.preventDefault();
         setError(null);
 
-        if (password !== confirmPassword) {
-            setError('Passwords do not match.');
+        if (!password) {
+            setError('Fadlan geli password-kaaga.');
             return;
         }
 
@@ -46,6 +46,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
                     emailRedirectTo: window.location.origin,
                     data: {
                         full_name: fullName,
+                        whatsapp: whatsapp,
                     },
                 },
             });
@@ -156,12 +157,12 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
                             </div>
 
                             <div className="form-group">
-                                <span className="input-icon">🔒</span>
+                                <span className="input-icon">📞</span>
                                 <input
-                                    type="password"
-                                    placeholder="Password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    type="tel"
+                                    placeholder="WhatsApp Number (e.g. 61XXXXXXX)"
+                                    value={whatsapp}
+                                    onChange={(e) => setWhatsapp(e.target.value)}
                                     required
                                 />
                             </div>
@@ -170,9 +171,9 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
                                 <span className="input-icon">🔒</span>
                                 <input
                                     type="password"
-                                    placeholder="Confirm Password"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    placeholder="Create Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     required
                                 />
                             </div>

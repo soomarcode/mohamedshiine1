@@ -480,6 +480,31 @@ img {
   line-height: 1.4;
 }
 
+.course-card-footer {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.btn-preview {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-preview:hover {
+  background: #f1f5f9;
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
+
 .btn-course {
   align-self: center;
   /* Centered as requested */
@@ -795,7 +820,8 @@ img {
 }
 
 .modal-logo {
-  height: 48px;
+  height: 85px;
+  /* Increased from 48px */
   width: auto;
 }
 
@@ -1051,6 +1077,51 @@ img {
   border-color: var(--accent-green);
   background-color: #f0fff4;
   box-shadow: 0 0 0 1px var(--accent-green);
+}
+
+.mobile-payment-input {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--accent-green);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-payment-input label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary-blue);
+  margin-bottom: 8px;
+}
+
+.mobile-payment-input input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.mobile-payment-input input:focus {
+  outline: none;
+  border-color: var(--accent-green);
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
 }
 
 .radio-circle {
@@ -1337,6 +1408,26 @@ img {
   margin-bottom: 24px;
 }
 
+.btn-enroll-now {
+  background: var(--accent-gold);
+  color: white;
+  padding: 12px 32px;
+  border-radius: var(--radius-sm);
+  font-weight: 800;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 12px rgba(200, 160, 53, 0.3);
+  transition: all 0.3s;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-enroll-now:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(200, 160, 53, 0.4);
+  background: #b69030;
+}
+
 .lesson-actions {
   display: flex;
   gap: 12px;
@@ -1503,6 +1594,20 @@ img {
   padding: 0;
   margin: 0;
   overflow-y: auto;
+}
+
+.lesson-item.locked {
+  opacity: 0.6;
+  cursor: pointer;
+  background: #f8fafc;
+}
+
+.lesson-item.locked:hover {
+  background: #f1f5f9;
+}
+
+.lesson-item.locked .lesson-status {
+  color: #94a3b8;
 }
 
 .lesson-item {

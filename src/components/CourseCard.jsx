@@ -17,9 +17,16 @@ export default function CourseCard(props) {
                     <h3>{title}</h3>
                 </div>
                 <p>{description}</p>
-                <button className={`btn-course ${isFree ? 'free' : 'paid'}`}>
-                    Daawo
-                </button>
+                <div className="course-card-footer">
+                    <button className={`btn-course ${isFree ? 'free' : 'paid'}`} onClick={(e) => { e.stopPropagation(); onClick(courseData); }}>
+                        Daawo
+                    </button>
+                    {!isFree && (
+                        <button className="btn-preview" onClick={(e) => { e.stopPropagation(); props.onPreview(courseData); }}>
+                            Preview
+                        </button>
+                    )}
+                </div>
             </div>
             <div className="course-card-image">
                 <img src={image} alt={title} />

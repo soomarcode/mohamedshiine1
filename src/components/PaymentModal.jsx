@@ -4,9 +4,14 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
     if (!isOpen || !course) return null;
 
     const [paymentMethod, setPaymentMethod] = useState('evc'); // evc, edahab, stripe
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
 
     const handlePayment = () => {
+        if ((paymentMethod === 'evc' || paymentMethod === 'edahab') && !phoneNumber) {
+            alert('Fadlan geli lambarkaaga');
+            return;
+        }
         setIsProcessing(true);
         // Simulate payment processing delay (e.g., waiting for USSD popup)
         setTimeout(() => {
@@ -59,6 +64,19 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
                                 <span>VISA</span> <span>MC</span>
                             </div>
                         </div>
+
+                        {(paymentMethod === 'evc' || paymentMethod === 'edahab') && (
+                            <div className="mobile-payment-input">
+                                <label>Geli Lambarkaaga (EVC/eDahab)</label>
+                                <input
+                                    type="tel"
+                                    placeholder="61xxxxxxx"
+                                    value={phoneNumber}
+                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    autoFocus
+                                />
+                            </div>
+                        )}
 
                         <p className="powered-by">Powered by <strong>MOBILEWALL™</strong></p>
                     </div>

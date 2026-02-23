@@ -70,7 +70,7 @@ export default function Courses({ onCourseClick }) {
                 <div className="courses-list">
                     {filteredCourses.length > 0 ? (
                         filteredCourses.map((course) => (
-                            <CourseCard key={course.id} {...course} onClick={onCourseClick} />
+                            <CourseCard key={course.id} {...course} onClick={onCourseClick} onPreview={props.onPreviewClick} />
                         ))
                     ) : (
                         <p style={{ textAlign: 'center', color: '#6c757d', padding: '40px' }}>
