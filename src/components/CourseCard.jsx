@@ -18,7 +18,7 @@ export default function CourseCard(props) {
                 </div>
                 <p>{description}</p>
                 <button className={`btn-course ${isFree ? 'free' : 'paid'}`}>
-                    {buttontext}
+                    Daawo
                 </button>
             </div>
             <div className="course-card-image">

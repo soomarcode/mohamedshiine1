@@ -86,8 +86,8 @@ img {
 }
 
 .header-logo .logo-img {
-  height: 60px;
-  /* Reduced for breathing space */
+  height: 80px;
+  /* Increased from 60px */
   width: auto;
   object-fit: contain;
   display: block;
@@ -204,7 +204,8 @@ img {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1100px;
+  /* Optimized width from 1200px */
   margin: 0 auto;
   padding: 40px 20px;
 }
@@ -480,23 +481,26 @@ img {
 }
 
 .btn-course {
-  align-self: flex-start;
-  padding: 10px 24px;
+  align-self: center;
+  /* Centered as requested */
+  padding: 10px 32px;
   border-radius: var(--radius-sm);
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: 700;
+  font-size: 0.9rem;
   transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .btn-course.free {
-  background: var(--bg-white);
-  color: var(--text-dark);
-  border: 2px solid var(--border-color);
+  background: var(--accent-green);
+  color: white;
+  border: 2px solid var(--accent-green);
 }
 
 .btn-course.free:hover {
-  border-color: var(--accent-green);
-  color: var(--accent-green);
+  background: var(--accent-green-hover);
+  border-color: var(--accent-green-hover);
   transform: translateY(-1px);
 }
 
@@ -612,8 +616,8 @@ img {
   }
 
   .header-logo .logo-img {
-    height: 58px;
-    /* Adjusted to 58px */
+    height: 70px;
+    /* Increased from 58px */
   }
 
   .header-nav a {
@@ -714,8 +718,8 @@ img {
 
 @media (max-width: 480px) {
   .header-logo .logo-img {
-    height: 65px;
-    /* Adjust for very small screens */
+    height: 75px;
+    /* Increased from 65px */
   }
 
   .header-nav {
