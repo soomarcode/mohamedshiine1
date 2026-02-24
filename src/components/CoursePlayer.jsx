@@ -168,59 +168,11 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                     <div className="tab-content" style={{ marginTop: '20px' }}>
                         {activeTab === 'curriculum' ? (
                             <div className="curriculum-view">
-                                <section className="current-lesson-details">
-                                    <h2>{activeLesson?.title || 'No active lesson'}</h2>
-                                    <p className="enrollment-status" style={{ marginBottom: '20px', color: '#64748b' }}>
-                                        {isPreviewMode
-                                            ? 'Waxaad hadda ku jirtaa Preview mode. Is qor si aad u hesho koorsada oo dhan.'
-                                            : 'Waxaad hadda si rasmi ah ugu qoran tahay course-kan.'}
-                                    </p>
-
-                                    <div className="lesson-actions">
-                                        {isPreviewMode ? (
-                                            <button className="btn-enroll-now" onClick={onEnroll}>
-                                                Enroll Now (${course.price})
-                                            </button>
-                                        ) : (
-                                            <>
-                                                <button
-                                                    className={`btn-mark-complete ${completedLessons.includes(activeLesson?.id) ? 'completed' : ''}`}
-                                                    onClick={handleMarkComplete}
-                                                    disabled={!activeLesson || completedLessons.includes(activeLesson?.id)}
-                                                >
-                                                    <span>{completedLessons.includes(activeLesson?.id) ? '✔ Completed' : '✔ Mark Complete'}</span>
-                                                </button>
-                                                <button
-                                                    className="btn-next-lesson"
-                                                    onClick={handleNextLesson}
-                                                    disabled={!activeLesson || lessons.findIndex(l => l.id === activeLesson.id) === lessons.length - 1}
-                                                >
-                                                    <span>🎥 Casharka {(lessons.findIndex(l => l.id === activeLesson?.id) + 2)}aad</span>
-                                                </button>
-                                            </>
-                                        )}
-                                    </div>
-
-                                    <div className="current-lesson-resources" style={{ marginTop: '30px', padding: '20px', background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                                        <h4 style={{ marginBottom: '15px' }}>Lesson Resources</h4>
-                                        <ul className="resource-list" style={{ listStyle: 'none', padding: 0 }}>
-                                            {activeLesson?.pdf_link ? (
-                                                <li style={{ marginBottom: '10px' }}>💼 PDF Casharka: <a href={activeLesson.pdf_link} target="_blank" rel="noreferrer" style={{ color: '#15803d', fontWeight: 600 }}>Soo rago PDF</a></li>
-                                            ) : (
-                                                <li style={{ color: '#94a3b8', marginBottom: '10px' }}>PDF looma helin casharkaan.</li>
-                                            )}
-                                            {activeLesson?.resource_link && (
-                                                <li>🔗 Link-iga waxtarka leh: <a href={activeLesson.resource_link} target="_blank" rel="noreferrer" style={{ color: '#15803d', fontWeight: 600 }}>Booqo halkan</a></li>
-                                            )}
-                                        </ul>
-                                    </div>
-                                </section>
-
-                                <section className="full-curriculum-list" style={{ marginTop: '40px' }}>
+                                <section className="full-curriculum-list">
                                     <div className="curriculum-header-merged" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                                         <h3 style={{ margin: 0 }}>Course Content</h3>
                                         <div className="mini-progress-pill" style={{ background: '#f1f5f9', padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700, color: '#15803d' }}>
-                                            {currentProgress}% COMPLETE
+                                            {calculateProgress()}% COMPLETE
                                         </div>
                                     </div>
 
@@ -270,6 +222,54 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                                             );
                                         })}
                                     </ul>
+                                </section>
+
+                                <section className="current-lesson-details" style={{ marginTop: '40px' }}>
+                                    <h2>{activeLesson?.title || 'No active lesson'}</h2>
+                                    <p className="enrollment-status" style={{ marginBottom: '20px', color: '#64748b' }}>
+                                        {isPreviewMode
+                                            ? 'Waxaad hadda ku jirtaa Preview mode. Is qor si aad u hesho koorsada oo dhan.'
+                                            : 'Waxaad hadda si rasmi ah ugu qoran tahay course-kan.'}
+                                    </p>
+
+                                    <div className="lesson-actions">
+                                        {isPreviewMode ? (
+                                            <button className="btn-enroll-now" onClick={onEnroll}>
+                                                Enroll Now (${course.price})
+                                            </button>
+                                        ) : (
+                                            <>
+                                                <button
+                                                    className={`btn-mark-complete ${completedLessons.includes(activeLesson?.id) ? 'completed' : ''}`}
+                                                    onClick={handleMarkComplete}
+                                                    disabled={!activeLesson || completedLessons.includes(activeLesson?.id)}
+                                                >
+                                                    <span>{completedLessons.includes(activeLesson?.id) ? '✔ Completed' : '✔ Mark Complete'}</span>
+                                                </button>
+                                                <button
+                                                    className="btn-next-lesson"
+                                                    onClick={handleNextLesson}
+                                                    disabled={!activeLesson || lessons.findIndex(l => l.id === activeLesson.id) === lessons.length - 1}
+                                                >
+                                                    <span>🎥 Casharka {(lessons.findIndex(l => l.id === activeLesson?.id) + 2)}aad</span>
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+
+                                    <div className="current-lesson-resources" style={{ marginTop: '30px', padding: '20px', background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                                        <h4 style={{ marginBottom: '15px' }}>Lesson Resources</h4>
+                                        <ul className="resource-list" style={{ listStyle: 'none', padding: 0 }}>
+                                            {activeLesson?.pdf_link ? (
+                                                <li style={{ marginBottom: '10px' }}>💼 PDF Casharka: <a href={activeLesson.pdf_link} target="_blank" rel="noreferrer" style={{ color: '#15803d', fontWeight: 600 }}>Soo rago PDF</a></li>
+                                            ) : (
+                                                <li style={{ color: '#94a3b8', marginBottom: '10px' }}>PDF looma helin casharkaan.</li>
+                                            )}
+                                            {activeLesson?.resource_link && (
+                                                <li>🔗 Link-iga waxtarka leh: <a href={activeLesson.resource_link} target="_blank" rel="noreferrer" style={{ color: '#15803d', fontWeight: 600 }}>Booqo halkan</a></li>
+                                            )}
+                                        </ul>
+                                    </div>
                                 </section>
                             </div>
                         ) : (

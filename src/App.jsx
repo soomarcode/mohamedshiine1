@@ -134,6 +134,7 @@ function App() {
         onClose={() => setIsPaymentOpen(false)}
         onComplete={handlePaymentComplete}
       />
+      <WhatsAppButton />
     </div>
   );
 }
