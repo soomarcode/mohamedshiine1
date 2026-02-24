@@ -1233,7 +1233,7 @@ img {
 }
 
 .player-logo {
-  height: 32px;
+  height: 56px;
 }
 
 .player-container {
@@ -1476,188 +1476,89 @@ img {
   background: #f8fafc;
 }
 
-/* SIDEBAR STYLES */
-.player-sidebar {
-  width: 380px;
-  position: sticky;
-  top: 88px;
-  height: calc(100vh - 110px);
-  display: flex;
-  flex-direction: column;
+/* COURSE PLAYER NEW LAYOUT */
+.player-container {
+  max-width: 1000px;
+  /* More focused width for single column */
+  margin: 0 auto;
+  padding: 40px 5%;
 }
 
-.sidebar-card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+.player-content {
+  width: 100%;
 }
 
-.curriculum-header {
-  padding: 12px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: white;
-  border-bottom: 1px solid #e2e8f0;
+.curriculum-view {
+  animation: fadeIn 0.4s ease-out;
 }
 
-.curriculum-header h3 {
-  font-size: 1rem;
-  margin: 0;
-  color: #1e293b;
-}
-
-.course-progress-container {
-  padding: 20px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.progress-header {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.current-lesson-details h2 {
+  font-size: 1.85rem;
+  color: var(--primary-dark);
   margin-bottom: 12px;
+  font-weight: 800;
 }
 
-.progress-header span:first-child {
-  font-weight: 600;
-  color: #64748b;
-  font-size: 0.85rem;
+.lesson-item-merged {
+  transition: all 0.2s ease;
 }
 
-.progress-bar-wrap {
-  height: 8px;
-  background: #e2e8f0;
-  border-radius: 4px;
-  overflow: hidden;
+.lesson-item-merged:hover:not(.locked) {
+  transform: translateX(4px);
+  background: #f8fafc !important;
 }
 
-.progress-bar-fill {
-  height: 100%;
-  background: #15803d;
-  width: 0%;
-  border-radius: 4px;
+.lesson-item-merged.active {
+  box-shadow: 0 4px 12px rgba(21, 128, 61, 0.1);
 }
 
-.progress-status {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #64748b;
-  letter-spacing: 0.05em;
-  margin-top: 4px;
+.lesson-status-icon {
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.lesson-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  overflow-y: auto;
-}
-
-.lesson-item.locked {
-  opacity: 0.6;
-  cursor: pointer;
-  background: #f8fafc;
-}
-
-.lesson-item.locked:hover {
-  background: #f1f5f9;
-}
-
-.lesson-item.locked .lesson-status {
-  color: #94a3b8;
-}
-
-.lesson-item {
-  display: flex;
-  padding: 12px 20px;
-  border-bottom: 1px solid #f1f5f9;
-  cursor: pointer;
-  align-items: center;
-  gap: 12px;
-  transition: all 0.2s;
+.resource-list li {
+  font-size: 0.95rem;
   color: #475569;
 }
 
-.lesson-item:hover:not(.active) {
-  background: #f8fafc;
+/* SIDEBAR STYLES - REMOVED OR CONVERTED */
+.player-sidebar {
+  display: none;
+  /* Hide if still in DOM somehow */
 }
 
-.lesson-item.active {
-  background: #1c4532;
-  color: white;
-}
-
-.lesson-item.active .lesson-duration {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.lesson-info-row {
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.lesson-title-text {
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.lesson-duration {
-  font-size: 0.75rem;
-  color: #94a3b8;
-}
-
-.lesson-item.is-completed {
-  background: #f0fdf4;
-}
-
-.lesson-item.is-completed .lesson-status {
-  color: #15803d;
-  font-weight: bold;
-}
-
-.lesson-item.locked {
-  color: #94a3b8;
-  cursor: not-allowed;
-}
-
-@media (max-width: 1100px) {
-  .player-container {
-    flex-direction: column;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
 
-  .player-sidebar {
-    width: 100%;
-    position: static;
-    height: auto;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 @media (max-width: 768px) {
-  .payment-body {
-    flex-direction: column;
+  .player-container {
+    padding: 20px 15px;
   }
 
-  .payment-methods {
-    border-right: none;
-    border-bottom: 1px solid #eee;
+  .current-lesson-details h2 {
+    font-size: 1.5rem;
   }
+}
 
-  .payment-summary {
-    width: 100%;
-    background: #fff;
-    padding: 20px;
-  }
+.payment-summary {
+  width: 100%;
+  background: #fff;
+  padding: 20px;
+}
 
-  .payment-modal-content {
-    max-height: 95vh;
-    width: 95%;
-  }
+.payment-modal-content {
+  max-height: 95vh;
+  width: 95%;
 }
 
 /* ===== ADMIN PANEL ===== */

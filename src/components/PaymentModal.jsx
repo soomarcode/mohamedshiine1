@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { processPayment } from '../services/paymentService';
 
 const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
     if (!isOpen || !course) return null;
@@ -7,17 +8,22 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
 
-    const handlePayment = () => {
+    const handlePayment = async () => {
         if (!phoneNumber) {
-            alert('Fadlan geli lambarkaaga (EVC Plus or eDahab)');
+            alert('Fadlan geli lambarkaaga');
             return;
         }
+
         setIsProcessing(true);
-        // Simulate payment processing delay (e.g., waiting for USSD popup)
-        setTimeout(() => {
+        const result = await processPayment(paymentMethod, course.price, phoneNumber);
+
+        if (result.success) {
             setIsProcessing(false);
             onComplete();
-        }, 2000); // 2 seconds delay
+        } else {
+            setIsProcessing(false);
+            alert(`Payment Failed: ${result.message}`);
+        }
     };
 
     return (
@@ -51,7 +57,7 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
                         </div>
 
                         <div className="mobile-payment-input-simple">
-                            <label>Geli Lambarkaaga (61xxxxxxx ama 62xxxxxxx)</label>
+                            <label>Geli Lambarkaaga (EVC ama eDahab)</label>
                             <input
                                 type="tel"
                                 placeholder="Geli lambarka..."
