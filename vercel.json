@@ -1,0 +1,12 @@
+{
+    "rewrites": [
+        {
+            "source": "/api-waafi/:path*",
+            "destination": "https://api.waafipay.com/:path*"
+        },
+        {
+            "source": "/api-edahab/:path*",
+            "destination": "https://edahab.net/:path*"
+        }
+    ]
+}

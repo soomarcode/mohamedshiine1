@@ -53,7 +53,7 @@ export const processPayment = async (method, amount, phoneNumber) => {
                 }
             };
 
-            const endpoint = import.meta.env.DEV ? WAAFI_DEV_URL : import.meta.env.VITE_WAAFI_API_URL;
+            const endpoint = WAAFI_DEV_URL;
             console.log("[DEBUG] Waafi/EVC Request Body:", JSON.stringify(body, null, 2));
             console.log("[DEBUG] Waafi/EVC Request URL:", endpoint);
 
@@ -92,7 +92,7 @@ export const processPayment = async (method, amount, phoneNumber) => {
 
             const bodyString = JSON.stringify(body);
             const hash = await generateSha256(bodyString + import.meta.env.VITE_EDAHAB_SECRET_KEY);
-            const baseUrl = import.meta.env.DEV ? EDAHAB_DEV_URL : import.meta.env.VITE_EDAHAB_API_URL;
+            const baseUrl = EDAHAB_DEV_URL;
             const url = `${baseUrl}?hash=${hash}`;
 
             console.log("[DEBUG] eDahab Request Body:", bodyString);
