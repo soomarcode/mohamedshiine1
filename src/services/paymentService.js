@@ -4,10 +4,8 @@
  */
 
 // API Base URLs and credentials should be stored in .env
-// VITE_WAAFI_API_URL
-// VITE_WAAFI_API_KEY
-// VITE_EDAHAB_API_URL
-// VITE_EDAHAB_API_KEY
+// Waafi: VITE_WAAFI_API_URL, VITE_WAAFI_MERCHANT_UID, VITE_WAAFI_API_KEY, VITE_WAAFI_STORE_ID
+// eDahab: VITE_EDAHAB_API_URL, VITE_EDAHAB_API_KEY, VITE_EDAHAB_SECRET_KEY, VITE_EDAHAB_AGENT_CODE
 
 export const processPayment = async (method, amount, phoneNumber) => {
     console.log(`Processing ${method} payment for ${amount} to ${phoneNumber}`);
