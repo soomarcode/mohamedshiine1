@@ -6,6 +6,10 @@
 // Waafi: VITE_WAAFI_API_URL, VITE_WAAFI_MERCHANT_UID, VITE_WAAFI_API_KEY, VITE_WAAFI_STORE_ID
 // eDahab: VITE_EDAHAB_API_URL, VITE_EDAHAB_API_KEY, VITE_EDAHAB_SECRET_KEY, VITE_EDAHAB_AGENT_CODE
 
+// Proxy endpoints for development to bypass CORS
+const WAAFI_DEV_URL = '/api-waafi/asm';
+const EDAHAB_DEV_URL = '/api-edahab/api/api/IssueInvoice';
+
 // Helper for SHA256 hashing (Required for eDahab)
 async function generateSha256(message) {
     const msgUint8 = new TextEncoder().encode(message);
@@ -49,9 +53,11 @@ export const processPayment = async (method, amount, phoneNumber) => {
                 }
             };
 
+            const endpoint = import.meta.env.DEV ? WAAFI_DEV_URL : import.meta.env.VITE_WAAFI_API_URL;
             console.log("[DEBUG] Waafi/EVC Request Body:", JSON.stringify(body, null, 2));
+            console.log("[DEBUG] Waafi/EVC Request URL:", endpoint);
 
-            const response = await fetch(import.meta.env.VITE_WAAFI_API_URL, {
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
@@ -81,12 +87,13 @@ export const processPayment = async (method, amount, phoneNumber) => {
                 amount: amount.toString(),
                 currency: "USD",
                 agentCode: import.meta.env.VITE_EDAHAB_AGENT_CODE,
-                ReturnUrl: window.location.origin // Capitalized R as per standard eDahab
+                ReturnUrl: window.location.origin
             };
 
             const bodyString = JSON.stringify(body);
             const hash = await generateSha256(bodyString + import.meta.env.VITE_EDAHAB_SECRET_KEY);
-            const url = `${import.meta.env.VITE_EDAHAB_API_URL}?hash=${hash}`;
+            const baseUrl = import.meta.env.DEV ? EDAHAB_DEV_URL : import.meta.env.VITE_EDAHAB_API_URL;
+            const url = `${baseUrl}?hash=${hash}`;
 
             console.log("[DEBUG] eDahab Request Body:", bodyString);
             console.log("[DEBUG] eDahab Request URL:", url);
