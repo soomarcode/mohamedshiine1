@@ -38,6 +38,7 @@ export const processPayment = async (method, amount, phoneNumber) => {
                 serviceName: "API_PURCHASE",
                 serviceParams: {
                     merchantUid: import.meta.env.VITE_WAAFI_MERCHANT_UID,
+                    apiUserId: import.meta.env.VITE_WAAFI_STORE_ID,
                     apiKey: import.meta.env.VITE_WAAFI_API_KEY,
                     storeId: import.meta.env.VITE_WAAFI_STORE_ID,
                     transactionId: "TRX" + Date.now(),
