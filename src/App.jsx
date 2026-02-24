@@ -8,6 +8,7 @@ import AuthModal from './components/AuthModal';
 import PaymentModal from './components/PaymentModal';
 import CoursePlayer from './components/CoursePlayer';
 import AdminPanel from './components/AdminPanel';
+import WhatsAppButton from './components/WhatsAppButton';
 import './index.css';
 
 function App() {
