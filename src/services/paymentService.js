@@ -18,6 +18,11 @@ async function generateSha256(message) {
 export const processPayment = async (method, amount, phoneNumber) => {
     console.log(`[DEBUG] Processing ${method} payment for ${amount} to ${phoneNumber}`);
 
+    if (!amount || !phoneNumber) {
+        console.error("[DEBUG] Missing required fields:", { amount, phoneNumber });
+        return { success: false, message: "Lambarka taleefanka ama qiimaha ayaa maqan." };
+    }
+
     try {
         // Map EVC to Waafi logic as it serves as the gateway
         if (method === 'evc' || method === 'waafi') {

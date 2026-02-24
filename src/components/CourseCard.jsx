@@ -1,11 +1,11 @@
 import React from 'react';
 
 export default function CourseCard(props) {
-    const { id, title, pricelabel, description, image, buttontext, type, onClick } = props;
+    const { id, title, price, pricelabel, description, image, buttontext, type, onClick } = props;
     const isFree = type === 'free';
 
     // Create a clean course object to pass back
-    const courseData = { id, title, pricelabel, description, image, buttontext, type };
+    const courseData = { id, title, price, pricelabel, description, image, buttontext, type };
 
     return (
         <div className="course-card" onClick={() => onClick(courseData)} style={{ cursor: 'pointer' }}>
