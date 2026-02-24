@@ -87,6 +87,7 @@ function App() {
   };
 
   const handlePaymentComplete = () => {
+    setIsPreviewMode(false);
     setIsPaymentOpen(false);
     setView('player'); // Go to player after payment
   };

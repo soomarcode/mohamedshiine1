@@ -260,7 +260,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
                             </button>
                         </form>
 
-                        <div style={{ marginTop: '10px', textAlign: 'center' }}>
+                        <div style={{ textAlign: 'center' }}>
                             <p className="modal-footer-text">
                                 Don't have an account? <span className="link-login" onClick={() => setView('signup')}>Sign Up</span>
                             </p>

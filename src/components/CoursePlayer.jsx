@@ -7,6 +7,10 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [completedLessons, setCompletedLessons] = useState([]);
+    const [quizQuestions, setQuizQuestions] = useState([]);
+    const [userAnswers, setUserAnswers] = useState({});
+    const [showQuizResults, setShowQuizResults] = useState(false);
+    const [activeTab, setActiveTab] = useState('lessons'); // 'lessons' or 'quiz'
 
     // Helper to extract YouTube ID from URL
     const extractYouTubeId = (input) => {
@@ -44,6 +48,17 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
             } else {
                 setLessons([]);
                 setActiveLesson(null);
+            }
+
+            // Fetch Quiz Questions
+            const { data: quizData, error: quizError } = await supabase
+                .from('quizzes')
+                .select('*')
+                .eq('course_id', course.id)
+                .order('id', { ascending: true });
+
+            if (!quizError && quizData) {
+                setQuizQuestions(quizData);
             }
 
             // Load completion status from local storage for now (or Supabase if table exists)
@@ -133,35 +148,112 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                         )}
                     </div>
 
-                    <h2>{activeLesson?.title || 'No active lesson'}</h2>
-                    <p className="enrollment-status">
-                        {isPreviewMode
-                            ? 'Waxaad hadda ku jirtaa Preview mode. Is qor si aad u hesho koorsada oo dhan.'
-                            : 'Waxaad hadda si rasmi ah ugu qoran tahay course-kan.'}
-                    </p>
-
-                    <div className="lesson-actions">
-                        {isPreviewMode ? (
-                            <button className="btn-enroll-now" onClick={onEnroll}>
-                                🚀 Is-qor hadda (${course.price})
+                    <div className="player-tabs">
+                        <button
+                            className={`player-tab ${activeTab === 'lessons' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('lessons')}
+                        >
+                            Lessons
+                        </button>
+                        {quizQuestions.length > 0 && (
+                            <button
+                                className={`player-tab ${activeTab === 'quiz' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('quiz')}
+                            >
+                                Quiz
                             </button>
-                        ) : (
+                        )}
+                    </div>
+
+                    <div className="tab-content" style={{ marginTop: '20px' }}>
+                        {activeTab === 'lessons' ? (
                             <>
-                                <button
-                                    className={`btn-mark-complete ${completedLessons.includes(activeLesson?.id) ? 'completed' : ''}`}
-                                    onClick={handleMarkComplete}
-                                    disabled={!activeLesson || completedLessons.includes(activeLesson?.id)}
-                                >
-                                    <span>{completedLessons.includes(activeLesson?.id) ? '✔ Completed' : '✔ Mark Complete'}</span>
-                                </button>
-                                <button
-                                    className="btn-next-lesson"
-                                    onClick={handleNextLesson}
-                                    disabled={!activeLesson || lessons.findIndex(l => l.id === activeLesson.id) === lessons.length - 1}
-                                >
-                                    <span>🎥 Casharka {(lessons.findIndex(l => l.id === activeLesson?.id) + 2)}aad</span>
-                                </button>
+                                <h2>{activeLesson?.title || 'No active lesson'}</h2>
+                                <p className="enrollment-status" style={{ marginBottom: '20px', color: '#64748b' }}>
+                                    {isPreviewMode
+                                        ? 'Waxaad hadda ku jirtaa Preview mode. Is qor si aad u hesho koorsada oo dhan.'
+                                        : 'Waxaad hadda si rasmi ah ugu qoran tahay course-kan.'}
+                                </p>
+
+                                <div className="lesson-actions">
+                                    {isPreviewMode ? (
+                                        <button className="btn-enroll-now" onClick={onEnroll}>
+                                            Enroll Now (${course.price})
+                                        </button>
+                                    ) : (
+                                        <>
+                                            <button
+                                                className={`btn-mark-complete ${completedLessons.includes(activeLesson?.id) ? 'completed' : ''}`}
+                                                onClick={handleMarkComplete}
+                                                disabled={!activeLesson || completedLessons.includes(activeLesson?.id)}
+                                            >
+                                                <span>{completedLessons.includes(activeLesson?.id) ? '✔ Completed' : '✔ Mark Complete'}</span>
+                                            </button>
+                                            <button
+                                                className="btn-next-lesson"
+                                                onClick={handleNextLesson}
+                                                disabled={!activeLesson || lessons.findIndex(l => l.id === activeLesson.id) === lessons.length - 1}
+                                            >
+                                                <span>🎥 Casharka {(lessons.findIndex(l => l.id === activeLesson?.id) + 2)}aad</span>
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
                             </>
+                        ) : (
+                            <div className="quiz-container">
+                                {showQuizResults ? (
+                                    <div className="quiz-results" style={{ textAlign: 'center', padding: '30px', background: 'white', borderRadius: '12px' }}>
+                                        <h3>Natiijada Quiz-ka</h3>
+                                        <div className="score-display" style={{ fontSize: '3rem', fontWeight: 'bold', color: '#15803d', margin: '20px 0' }}>
+                                            {Object.keys(userAnswers).filter(id => {
+                                                const q = quizQuestions.find(qq => qq.id === parseInt(id));
+                                                return q?.correct_answer === userAnswers[id];
+                                            }).length} / {quizQuestions.length}
+                                        </div>
+                                        <button className="btn-enroll-now" onClick={() => { setShowQuizResults(false); setUserAnswers({}); }}>Mar kale isku day</button>
+                                    </div>
+                                ) : (
+                                    <div className="quiz-questions">
+                                        {quizQuestions.map((q, idx) => (
+                                            <div key={q.id} className="quiz-question-item" style={{ background: 'white', padding: '20px', borderRadius: '12px', marginBottom: '15px' }}>
+                                                <h4 style={{ marginBottom: '15px' }}>{idx + 1}. {q.question}</h4>
+                                                <div className="quiz-options" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                                    {Array.isArray(q.options) && q.options.map((opt, oIdx) => (
+                                                        <label key={oIdx} style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '10px',
+                                                            padding: '12px',
+                                                            border: '1px solid #e2e8f0',
+                                                            borderRadius: '8px',
+                                                            cursor: 'pointer',
+                                                            background: userAnswers[q.id] === oIdx ? '#f0fdf4' : 'transparent',
+                                                            borderColor: userAnswers[q.id] === oIdx ? '#15803d' : '#e2e8f0'
+                                                        }}>
+                                                            <input
+                                                                type="radio"
+                                                                name={`q-${q.id}`}
+                                                                checked={userAnswers[q.id] === oIdx}
+                                                                onChange={() => setUserAnswers(prev => ({ ...prev, [q.id]: oIdx }))}
+                                                            />
+                                                            {opt}
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ))}
+                                        <button
+                                            className="btn-enroll-now"
+                                            style={{ marginTop: '20px', width: '100%' }}
+                                            onClick={() => setShowQuizResults(true)}
+                                            disabled={Object.keys(userAnswers).length < quizQuestions.length}
+                                        >
+                                            Submit Quiz
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         )}
                     </div>
 
