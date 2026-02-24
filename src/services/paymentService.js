@@ -47,6 +47,7 @@ export const processPayment = async (method, amount, phoneNumber) => {
                         accountNo: phoneNumber
                     },
                     transactionInfo: {
+                        referenceId: "TRX" + Date.now(),
                         amount: amount.toString(),
                         currency: "USD",
                         description: "Course Enrollment"
