@@ -16,10 +16,11 @@ async function generateSha256(message) {
 }
 
 export const processPayment = async (method, amount, phoneNumber) => {
-    console.log(`Processing ${method} payment for ${amount} to ${phoneNumber}`);
+    console.log(`[DEBUG] Processing ${method} payment for ${amount} to ${phoneNumber}`);
 
     try {
-        if (method === 'waafi') {
+        // Map EVC to Waafi logic as it serves as the gateway
+        if (method === 'evc' || method === 'waafi') {
             const body = {
                 schemaVersion: "1.0",
                 requestId: Date.now().toString(),
@@ -43,20 +44,28 @@ export const processPayment = async (method, amount, phoneNumber) => {
                 }
             };
 
+            console.log("[DEBUG] Waafi/EVC Request Body:", JSON.stringify(body, null, 2));
+
             const response = await fetch(import.meta.env.VITE_WAAFI_API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
+            }).catch(err => {
+                console.error("[DEBUG] Waafi/EVC Fetch Error (CORS?):", err);
+                throw new Error("Network error or CORS issue. Please check the console.");
             });
 
-            const data = await response.json();
-            console.log("Waafi Response:", data);
+            if (!response.ok) {
+                console.error("[DEBUG] Waafi/EVC Response Not OK:", response.status, response.statusText);
+            }
 
-            // Waafi Code 2001 is success for some APIs, but check data.responseCode
+            const data = await response.json();
+            console.log("[DEBUG] Waafi/EVC Response Data:", data);
+
             if (data.responseCode === "2001") {
                 return { success: true, message: 'Payment processed successfully' };
             } else {
-                return { success: false, message: data.responseMsg || 'Waafi payment failed' };
+                return { success: false, message: data.responseMsg || 'Waafi/EVC payment failed' };
             }
         }
 
@@ -67,20 +76,34 @@ export const processPayment = async (method, amount, phoneNumber) => {
                 amount: amount.toString(),
                 currency: "USD",
                 agentCode: import.meta.env.VITE_EDAHAB_AGENT_CODE,
-                returnUrl: window.location.origin
+                ReturnUrl: window.location.origin // Capitalized R as per standard eDahab
             };
 
             const bodyString = JSON.stringify(body);
             const hash = await generateSha256(bodyString + import.meta.env.VITE_EDAHAB_SECRET_KEY);
+            const url = `${import.meta.env.VITE_EDAHAB_API_URL}?hash=${hash}`;
 
-            const response = await fetch(`${import.meta.env.VITE_EDAHAB_API_URL}?hash=${hash}`, {
+            console.log("[DEBUG] eDahab Request Body:", bodyString);
+            console.log("[DEBUG] eDahab Request URL:", url);
+
+            const response = await fetch(url, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
                 body: bodyString
+            }).catch(err => {
+                console.error("[DEBUG] eDahab Fetch Error (CORS?):", err);
+                throw new Error("Network error or CORS issue. Please check the console.");
             });
 
+            if (!response.ok) {
+                console.error("[DEBUG] eDahab Response Not OK:", response.status, response.statusText);
+            }
+
             const data = await response.json();
-            console.log("eDahab Response:", data);
+            console.log("[DEBUG] eDahab Response Data:", data);
 
             if (data.StatusCode === 0 || data.success === true) {
                 return { success: true, message: 'Payment processed successfully' };
@@ -89,16 +112,9 @@ export const processPayment = async (method, amount, phoneNumber) => {
             }
         }
 
-        if (method === 'evc') {
-            // EVC Plus direct integration often uses Waafi Pay's endpoint if integrated
-            // For now, we will assume the user wants the simulation or we redirect to Waafi if they use EVC
-            // If the user has Waafi keys, EVC can often be processed through Waafi's MWALLET_ACCOUNT
-            return new Promise((resolve) => setTimeout(() => resolve({ success: true }), 2000));
-        }
-
         return { success: false, message: 'Unknown payment method' };
     } catch (error) {
-        console.error('Payment Error:', error);
+        console.error('[DEBUG] Payment Service Exception:', error);
         return { success: false, message: error.message };
     }
 };
