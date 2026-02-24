@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../supabase';
 import CourseCard from './CourseCard';
 
-export default function Courses({ onCourseClick }) {
+export default function Courses({ onCourseClick = () => { }, onPreviewClick = () => { } }) {
+    console.log('Courses Component Rendered, props:', { onCourseClick, onPreviewClick });
     const [coursesData, setCoursesData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
@@ -70,7 +71,7 @@ export default function Courses({ onCourseClick }) {
                 <div className="courses-list">
                     {filteredCourses.length > 0 ? (
                         filteredCourses.map((course) => (
-                            <CourseCard key={course.id} {...course} onClick={onCourseClick} onPreview={props.onPreviewClick} />
+                            <CourseCard key={course.id} {...course} onClick={onCourseClick} onPreview={onPreviewClick} />
                         ))
                     ) : (
                         <p style={{ textAlign: 'center', color: '#6c757d', padding: '40px' }}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { supabase } from '../supabase';
 
 export default function Header({ onLogin, user, onAdminClick }) {
@@ -10,7 +10,7 @@ export default function Header({ onLogin, user, onAdminClick }) {
     const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
     const avatarUrl = user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${displayName}&background=28a745&color=fff`;
 
-    const [menuActive, setMenuActive] = React.useState(false);
+    const [menuActive, setMenuActive] = useState(false);
 
     return (
         <header className="header">

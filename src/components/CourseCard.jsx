@@ -22,7 +22,14 @@ export default function CourseCard(props) {
                         Daawo
                     </button>
                     {!isFree && (
-                        <button className="btn-preview" onClick={(e) => { e.stopPropagation(); props.onPreview(courseData); }}>
+                        <button className="btn-preview" onClick={(e) => {
+                            e.stopPropagation();
+                            if (props.onPreview) {
+                                props.onPreview(courseData);
+                            } else {
+                                console.warn('onPreview prop missing in CourseCard');
+                            }
+                        }}>
                             Preview
                         </button>
                     )}

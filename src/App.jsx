@@ -19,6 +19,8 @@ function App() {
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
+  console.log('App Rendering, view:', view);
+
   useEffect(() => {
     // Check active session
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -112,7 +114,10 @@ function App() {
         onAdminClick={() => setView('admin')}
       />
       <Hero onCtaClick={() => openAuthModal('select')} />
-      <Courses onCourseClick={handleCourseClick} onPreviewClick={handlePreviewClick} />
+      <Courses
+        onCourseClick={(c) => { console.log('Course Selected:', c); handleCourseClick(c); }}
+        onPreviewClick={(c) => { console.log('Preview Selected:', c); handlePreviewClick(c); }}
+      />
       <FeaturesBar />
 
       <AuthModal

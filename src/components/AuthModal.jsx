@@ -13,6 +13,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
     const [whatsapp, setWhatsapp] = useState('');
     const [fullName, setFullName] = useState('');
     const [error, setError] = useState(null);
+    const [message, setMessage] = useState(null);
 
     // Reset view when closing? handled by parent re-rendering or effect, 
     // but for now simple state is fine.
@@ -71,7 +72,6 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
         e.preventDefault();
         setLoading(true);
         setError(null);
-
         try {
             const { data, error } = await supabase.auth.signInWithPassword({
                 email,
@@ -81,6 +81,25 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
             if (data.session) {
                 onLoginSuccess && onLoginSuccess();
             }
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleResetPassword = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+        setMessage(null);
+
+        try {
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.origin + '/reset-password',
+            });
+            if (error) throw error;
+            setMessage('Email xaqiijin ah ayaa laguu soo diray. Fadlan check-garee inbox-kaaga.');
         } catch (error) {
             setError(error.message);
         } finally {
@@ -233,6 +252,9 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
                                     required
                                 />
                             </div>
+                            <div className="forgot-password-link">
+                                <span onClick={() => setView('forgot')}>Ma ilaawday Password-ka?</span>
+                            </div>
                             <button type="submit" className="btn-auth btn-login-blue width-100" disabled={loading}>
                                 {loading ? 'Logging in...' : 'Login'}
                             </button>
@@ -245,6 +267,39 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
                         </div>
                     </div>
                 )}
+
+                {view === 'forgot' && (
+                    <div className="modal-body forgot-view">
+                        <h2 className="modal-title">Reset Password</h2>
+                        <p className="modal-subtitle">Geli email-kaaga si aad u bedesho password-ka.</p>
+
+                        {error && <p className="error-text">{error}</p>}
+                        {message && <p className="success-text">{message}</p>}
+
+                        <form className="auth-form" onSubmit={handleResetPassword}>
+                            <div className="form-group">
+                                <span className="input-icon">✉️</span>
+                                <input
+                                    type="email"
+                                    placeholder="Emailkaagii..."
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <button type="submit" className="btn-auth btn-login-blue width-100" disabled={loading}>
+                                {loading ? 'Diraya...' : 'Soo dir Reset Link'}
+                            </button>
+                        </form>
+
+                        <div className="modal-footer-wrapper">
+                            <p className="modal-footer-text">
+                                Ku laabo <span className="link-login" onClick={() => setView('login')}>Login</span>
+                            </p>
+                        </div>
+                    </div>
+                )}
+
                 {view === 'success' && (
                     <div className="modal-body success-view" style={{ textAlign: 'center', padding: '20px 0' }}>
                         <div style={{ fontSize: '4rem', marginBottom: '20px' }}>📧</div>
