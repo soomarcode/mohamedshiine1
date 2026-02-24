@@ -4,7 +4,7 @@ import { processPayment } from '../services/paymentService';
 const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
     if (!isOpen || !course) return null;
 
-    const [paymentMethod, setPaymentMethod] = useState('evc');
+    const [paymentMethod, setPaymentMethod] = useState('waafi');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
 
@@ -42,10 +42,10 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
                         <h3>Dooro habka lacag bixinta</h3>
                         <div className="payment-options-row">
                             <div
-                                className={`payment-option-simple ${paymentMethod === 'evc' ? 'selected' : ''}`}
-                                onClick={() => setPaymentMethod('evc')}
+                                className={`payment-option-simple ${paymentMethod === 'waafi' ? 'selected' : ''}`}
+                                onClick={() => setPaymentMethod('waafi')}
                             >
-                                <span className="method-name">EVC Plus</span>
+                                <span className="method-name">Waafi Pay</span>
                             </div>
 
                             <div
@@ -54,10 +54,17 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
                             >
                                 <span className="method-name">eDahab</span>
                             </div>
+
+                            <div
+                                className={`payment-option-simple ${paymentMethod === 'evc' ? 'selected' : ''}`}
+                                onClick={() => setPaymentMethod('evc')}
+                            >
+                                <span className="method-name">EVC Plus</span>
+                            </div>
                         </div>
 
                         <div className="mobile-payment-input-simple">
-                            <label>Geli Lambarkaaga (EVC ama eDahab)</label>
+                            <label>Geli Lambarkaaga (Waafi, eDahab, ama EVC)</label>
                             <input
                                 type="tel"
                                 placeholder="Geli lambarka..."
