@@ -1063,14 +1063,24 @@ img {
   gap: 24px;
 }
 
-.payment-course-info {
-  margin-bottom: 8px;
+.payment-thumbnail-wrapper {
+  margin-bottom: 20px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: white;
 }
 
-.payment-course-info h2 {
-  font-size: 1.5rem;
-  color: var(--primary-dark);
-  margin-bottom: 12px;
+.payment-course-thumbnail {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.payment-course-thumbnail:hover {
+  transform: scale(1.02);
 }
 
 .course-desc-payment {
