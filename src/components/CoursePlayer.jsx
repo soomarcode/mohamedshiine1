@@ -148,26 +148,26 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                         )}
                     </div>
 
-                    <div className="player-tabs">
-                        <button
-                            className={`player-tab ${activeTab === 'curriculum' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('curriculum')}
-                        >
-                            Curriculum
-                        </button>
-                        {quizQuestions.length > 0 && (
+                    {quizQuestions.length > 0 && (
+                        <div className="player-tabs">
+                            <button
+                                className={`player-tab ${activeTab === 'curriculum' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('curriculum')}
+                            >
+                                Curriculum
+                            </button>
                             <button
                                 className={`player-tab ${activeTab === 'quiz' ? 'active' : ''}`}
                                 onClick={() => setActiveTab('quiz')}
                             >
                                 Quiz
                             </button>
-                        )}
-                    </div>
+                        </div>
+                    )}
 
                     <div className="tab-content" style={{ marginTop: '20px' }}>
                         {activeTab === 'curriculum' ? (
-                            <div className="curriculum-view">
+                            <div className="curriculum-view" style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
                                 <section className="full-curriculum-list">
                                     <div className="curriculum-header-merged" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                                         <h3 style={{ margin: 0 }}>Course Content</h3>
@@ -192,31 +192,45 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                                                         alignItems: 'center',
                                                         gap: '15px',
                                                         padding: '16px',
-                                                        background: isActive ? '#f0fdf4' : 'white',
+                                                        background: 'rgba(34, 197, 94, 0.04)',
                                                         border: `1px solid ${isActive ? '#15803d' : '#e2e8f0'}`,
                                                         borderRadius: '12px',
                                                         marginBottom: '10px',
-                                                        cursor: isLocked ? 'default' : 'pointer',
-                                                        opacity: isLocked ? 0.7 : 1
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.2s ease'
                                                     }}
                                                 >
                                                     <span className="lesson-status-icon" style={{
-                                                        width: '30px',
-                                                        height: '30px',
+                                                        width: '32px',
+                                                        height: '32px',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
                                                         borderRadius: '50%',
-                                                        background: isCompleted ? '#15803d' : (isActive ? '#15803d' : '#f1f5f9'),
+                                                        background: isCompleted ? '#22c55e' : (isActive ? '#15803d' : (isLocked ? '#f1f5f9' : '#e2e8f0')),
                                                         color: isCompleted || isActive ? 'white' : '#64748b',
-                                                        fontSize: '0.8rem',
-                                                        fontWeight: 'bold'
+                                                        fontSize: '0.9rem',
+                                                        fontWeight: 'bold',
+                                                        flexShrink: 0
                                                     }}>
-                                                        {isCompleted ? '✔' : (isLocked ? '🔒' : (index + 1))}
+                                                        {isCompleted ? (
+                                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                        ) : isLocked ? (
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                                        ) : (
+                                                            <span>{index + 1}</span>
+                                                        )}
                                                     </span>
                                                     <div className="lesson-info-row" style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                        <span className="lesson-title-text" style={{ fontWeight: isActive ? 700 : 500 }}>{lesson.title}</span>
-                                                        <span className="lesson-duration" style={{ fontSize: '0.85rem', color: '#64748b' }}>{lesson.duration || '0:00'}</span>
+                                                        <span className="lesson-title-text" style={{
+                                                            fontWeight: isActive ? 700 : 500,
+                                                            color: '#1a2332'
+                                                        }}>
+                                                            {lesson.title}
+                                                        </span>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                            <span className="lesson-duration" style={{ fontSize: '0.85rem', color: '#64748b' }}>{lesson.duration || '0:00'}</span>
+                                                        </div>
                                                     </div>
                                                 </li>
                                             );
@@ -224,17 +238,58 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                                     </ul>
                                 </section>
 
-                                <section className="current-lesson-details" style={{ marginTop: '40px' }}>
-                                    <h2>{activeLesson?.title || 'No active lesson'}</h2>
-                                    <p className="enrollment-status" style={{ marginBottom: '20px', color: '#64748b' }}>
+                                <div className="sidebar-resources" style={{ position: 'static', width: '100%', padding: '0' }}>
+                                    <h4 style={{ fontSize: '1.2rem', marginBottom: '15px' }}>Lesson Resources</h4>
+                                    <div className="resource-box-content">
+                                        {activeLesson?.pdf_link ? (
+                                            <div className="resource-item-box">
+                                                <span className="resource-icon">💼</span>
+                                                <div className="resource-text">
+                                                    <span>PDF Casharka</span>
+                                                    <a href={activeLesson.pdf_link} target="_blank" rel="noreferrer">Soo rago PDF</a>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="resource-empty-info">PDF looma helin casharkaan.</div>
+                                        )}
+                                        {activeLesson?.resource_link && (
+                                            <div className="resource-item-box">
+                                                <span className="resource-icon">🔗</span>
+                                                <div className="resource-text">
+                                                    <span>Link waxtar leh</span>
+                                                    <a href={activeLesson.resource_link} target="_blank" rel="noreferrer">Booqo halkan</a>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <section className="current-lesson-details" style={{ marginTop: '20px', padding: '25px', background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+                                    <h2 style={{ fontSize: '1.6rem', color: '#1e293b', marginBottom: '8px' }}>{activeLesson?.title || 'No active lesson'}</h2>
+                                    <p className="enrollment-status" style={{ marginBottom: '20px', color: '#64748b', fontSize: '0.95rem' }}>
                                         {isPreviewMode
-                                            ? 'Waxaad hadda ku jirtaa Preview mode. Is qor si aad u hesho koorsada oo dhan.'
-                                            : 'Waxaad hadda si rasmi ah ugu qoran tahay course-kan.'}
+                                            ? 'Waad ku mahadsantahay daawashada preview-ga. Si aad u dhamaystirto koorsada, fadlan is qor.'
+                                            : 'Kani waa casharka aad hadda daawanayso.'}
                                     </p>
 
-                                    <div className="lesson-actions">
+                                    <div className="lesson-actions" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                                         {isPreviewMode ? (
-                                            <button className="btn-enroll-now" onClick={onEnroll}>
+                                            <button
+                                                className="btn-enroll-now"
+                                                style={{
+                                                    padding: '10px 24px',
+                                                    fontSize: '1rem',
+                                                    background: '#22c55e',
+                                                    color: 'white',
+                                                    borderRadius: '10px',
+                                                    fontWeight: 700,
+                                                    border: 'none',
+                                                    boxShadow: '0 4px 12px rgba(34, 197, 94, 0.25)',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.3s ease'
+                                                }}
+                                                onClick={onEnroll}
+                                            >
                                                 Enroll Now (${course.price})
                                             </button>
                                         ) : (
@@ -243,6 +298,7 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                                                     className={`btn-mark-complete ${completedLessons.includes(activeLesson?.id) ? 'completed' : ''}`}
                                                     onClick={handleMarkComplete}
                                                     disabled={!activeLesson || completedLessons.includes(activeLesson?.id)}
+                                                    style={{ padding: '10px 20px', fontSize: '0.95rem' }}
                                                 >
                                                     <span>{completedLessons.includes(activeLesson?.id) ? '✔ Completed' : '✔ Mark Complete'}</span>
                                                 </button>
@@ -250,25 +306,12 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                                                     className="btn-next-lesson"
                                                     onClick={handleNextLesson}
                                                     disabled={!activeLesson || lessons.findIndex(l => l.id === activeLesson.id) === lessons.length - 1}
+                                                    style={{ padding: '10px 20px', fontSize: '0.95rem', background: '#f8fafc', color: '#1e293b', border: '1px solid #e2e8f0' }}
                                                 >
-                                                    <span>🎥 Casharka {(lessons.findIndex(l => l.id === activeLesson?.id) + 2)}aad</span>
+                                                    <span>Next Lesson 🎥</span>
                                                 </button>
                                             </>
                                         )}
-                                    </div>
-
-                                    <div className="current-lesson-resources" style={{ marginTop: '30px', padding: '20px', background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                                        <h4 style={{ marginBottom: '15px' }}>Lesson Resources</h4>
-                                        <ul className="resource-list" style={{ listStyle: 'none', padding: 0 }}>
-                                            {activeLesson?.pdf_link ? (
-                                                <li style={{ marginBottom: '10px' }}>💼 PDF Casharka: <a href={activeLesson.pdf_link} target="_blank" rel="noreferrer" style={{ color: '#15803d', fontWeight: 600 }}>Soo rago PDF</a></li>
-                                            ) : (
-                                                <li style={{ color: '#94a3b8', marginBottom: '10px' }}>PDF looma helin casharkaan.</li>
-                                            )}
-                                            {activeLesson?.resource_link && (
-                                                <li>🔗 Link-iga waxtarka leh: <a href={activeLesson.resource_link} target="_blank" rel="noreferrer" style={{ color: '#15803d', fontWeight: 600 }}>Booqo halkan</a></li>
-                                            )}
-                                        </ul>
                                     </div>
                                 </section>
                             </div>

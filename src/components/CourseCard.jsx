@@ -18,21 +18,19 @@ export default function CourseCard(props) {
                 </div>
                 <p>{description}</p>
                 <div className="course-card-footer">
-                    <button className={`btn-course ${isFree ? 'free' : 'paid'}`} onClick={(e) => { e.stopPropagation(); onClick(courseData); }}>
-                        Daawo
+                    <button className={`btn-course ${isFree ? 'free' : 'paid'}`} onClick={(e) => {
+                        e.stopPropagation();
+                        if (props.onPreview) {
+                            props.onPreview(courseData);
+                        } else {
+                            onClick(courseData);
+                        }
+                    }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 6V18L19 12L7 6Z" fill="white" />
+                        </svg>
+                        <span>Daawo</span>
                     </button>
-                    {!isFree && (
-                        <button className="btn-preview" onClick={(e) => {
-                            e.stopPropagation();
-                            if (props.onPreview) {
-                                props.onPreview(courseData);
-                            } else {
-                                console.warn('onPreview prop missing in CourseCard');
-                            }
-                        }}>
-                            Preview
-                        </button>
-                    )}
                 </div>
             </div>
             <div className="course-card-image">
