@@ -93,34 +93,42 @@ function App() {
     setView('player'); // Go to player after payment
   };
 
-  if (view === 'player' && currentCourse) {
-    return (
-      <CoursePlayer
-        course={currentCourse}
-        isPreviewMode={isPreviewMode}
-        onBack={() => setView('home')}
-        onEnroll={() => setIsPaymentOpen(true)}
-      />
-    );
-  }
+  const renderView = () => {
+    if (view === 'player' && currentCourse) {
+      return (
+        <CoursePlayer
+          course={currentCourse}
+          isPreviewMode={isPreviewMode}
+          onBack={() => setView('home')}
+          onEnroll={() => setIsPaymentOpen(true)}
+        />
+      );
+    }
 
-  if (view === 'admin') {
-    return <AdminPanel onBack={() => setView('home')} />;
-  }
+    if (view === 'admin') {
+      return <AdminPanel onBack={() => setView('home')} />;
+    }
+
+    return (
+      <>
+        <Header
+          onLogin={() => openAuthModal('login')}
+          user={user}
+          onAdminClick={() => setView('admin')}
+        />
+        <Hero onCtaClick={() => openAuthModal('select')} />
+        <Courses
+          onCourseClick={(c) => { console.log('Course Selected:', c); handleCourseClick(c); }}
+          onPreviewClick={(c) => { console.log('Preview Selected:', c); handlePreviewClick(c); }}
+        />
+        <FeaturesBar />
+      </>
+    );
+  };
 
   return (
     <div className="app">
-      <Header
-        onLogin={() => openAuthModal('login')}
-        user={user}
-        onAdminClick={() => setView('admin')}
-      />
-      <Hero onCtaClick={() => openAuthModal('select')} />
-      <Courses
-        onCourseClick={(c) => { console.log('Course Selected:', c); handleCourseClick(c); }}
-        onPreviewClick={(c) => { console.log('Preview Selected:', c); handlePreviewClick(c); }}
-      />
-      <FeaturesBar />
+      {renderView()}
 
       <AuthModal
         isOpen={isModalOpen}
