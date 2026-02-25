@@ -62,7 +62,7 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
                             <label>Geli Lambarkaaga (EVC ama eDahab)</label>
                             <input
                                 type="tel"
-                                placeholder="Geli lambarka..."
+                                placeholder="Geli lambarka ( tusaale 6xxxxxxxx )"
                                 value={phoneNumber}
                                 onChange={(e) => setPhoneNumber(e.target.value)}
                                 autoFocus
