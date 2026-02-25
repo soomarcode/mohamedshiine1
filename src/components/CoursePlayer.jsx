@@ -167,11 +167,11 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
 
                     <div className="tab-content" style={{ marginTop: '20px' }}>
                         {activeTab === 'curriculum' ? (
-                            <div className="curriculum-view" style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+                            <div className="curriculum-view" style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
                                 <section className="full-curriculum-list">
-                                    <div className="curriculum-header-merged" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                                        <h3 style={{ margin: 0 }}>Course Content</h3>
-                                        <div className="mini-progress-pill" style={{ background: '#f1f5f9', padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700, color: '#15803d' }}>
+                                    <div className="section-header-unified" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                                        <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#1a2332' }}>Course Content</h3>
+                                        <div className="mini-progress-pill" style={{ background: '#f0fdf4', padding: '4px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 800, color: '#15803d', border: '1px solid #dcfce7' }}>
                                             {calculateProgress()}% COMPLETE
                                         </div>
                                     </div>
@@ -239,7 +239,9 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                                 </section>
 
                                 <div className="sidebar-resources" style={{ position: 'static', width: '100%', padding: '0' }}>
-                                    <h4 style={{ fontSize: '1.2rem', marginBottom: '15px' }}>Lesson Resources</h4>
+                                    <div className="section-header-unified" style={{ marginBottom: '15px' }}>
+                                        <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#1a2332' }}>Lesson Resources</h3>
+                                    </div>
                                     <div className="resource-box-content">
                                         {activeLesson?.pdf_link ? (
                                             <div className="resource-item-box">
@@ -264,27 +266,27 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                                     </div>
                                 </div>
 
-                                <section className="current-lesson-details" style={{ marginTop: '20px', padding: '25px', background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-                                    <h2 style={{ fontSize: '1.6rem', color: '#1e293b', marginBottom: '8px' }}>{activeLesson?.title || 'No active lesson'}</h2>
-                                    <p className="enrollment-status" style={{ marginBottom: '20px', color: '#64748b', fontSize: '0.95rem' }}>
+                                <section className="current-lesson-details" style={{ marginTop: '10px', padding: '20px', background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                                    <h2 style={{ fontSize: '1.4rem', color: '#1e293b', marginBottom: '8px' }}>{activeLesson?.title || 'No active lesson'}</h2>
+                                    <p className="enrollment-status" style={{ marginBottom: '15px', color: '#64748b', fontSize: '0.9rem' }}>
                                         {isPreviewMode
-                                            ? 'Waad ku mahadsantahay daawashada preview-ga. Si aad u dhamaystirto koorsada, fadlan is qor.'
-                                            : 'Kani waa casharka aad hadda daawanayso.'}
+                                            ? 'Waad ku mahadsantahay daawashada preview-ga. Is qor si aad u hesho koorsada.'
+                                            : 'Official enrollment active.'}
                                     </p>
 
-                                    <div className="lesson-actions" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                                        {isPreviewMode ? (
+                                    <div className="lesson-actions" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                        {isPreviewMode && course.price > 0 ? (
                                             <button
                                                 className="btn-enroll-now"
                                                 style={{
-                                                    padding: '10px 24px',
-                                                    fontSize: '1rem',
+                                                    padding: '8px 16px',
+                                                    fontSize: '0.85rem',
                                                     background: '#22c55e',
                                                     color: 'white',
-                                                    borderRadius: '10px',
+                                                    borderRadius: '8px',
                                                     fontWeight: 700,
                                                     border: 'none',
-                                                    boxShadow: '0 4px 12px rgba(34, 197, 94, 0.25)',
+                                                    boxShadow: '0 2px 8px rgba(34, 197, 94, 0.2)',
                                                     cursor: 'pointer',
                                                     transition: 'all 0.3s ease'
                                                 }}
@@ -292,13 +294,13 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                                             >
                                                 Enroll Now (${course.price})
                                             </button>
-                                        ) : (
+                                        ) : !isPreviewMode && (
                                             <>
                                                 <button
                                                     className={`btn-mark-complete ${completedLessons.includes(activeLesson?.id) ? 'completed' : ''}`}
                                                     onClick={handleMarkComplete}
                                                     disabled={!activeLesson || completedLessons.includes(activeLesson?.id)}
-                                                    style={{ padding: '10px 20px', fontSize: '0.95rem' }}
+                                                    style={{ padding: '8px 16px', fontSize: '0.85rem' }}
                                                 >
                                                     <span>{completedLessons.includes(activeLesson?.id) ? '✔ Completed' : '✔ Mark Complete'}</span>
                                                 </button>
@@ -306,7 +308,7 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                                                     className="btn-next-lesson"
                                                     onClick={handleNextLesson}
                                                     disabled={!activeLesson || lessons.findIndex(l => l.id === activeLesson.id) === lessons.length - 1}
-                                                    style={{ padding: '10px 20px', fontSize: '0.95rem', background: '#f8fafc', color: '#1e293b', border: '1px solid #e2e8f0' }}
+                                                    style={{ padding: '8px 16px', fontSize: '0.85rem', background: '#f8fafc', color: '#1e293b', border: '1px solid #e2e8f0' }}
                                                 >
                                                     <span>Next Lesson 🎥</span>
                                                 </button>
