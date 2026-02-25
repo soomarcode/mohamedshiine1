@@ -1053,14 +1053,33 @@ img {
 /* ===== PAYMENT MODAL ===== */
 /* ===== SIMPLIFIED PAYMENT MODAL ===== */
 .payment-modal-simple {
-  max-width: 400px;
+  max-width: 360px;
   width: 90%;
-  padding: 30px 24px;
+  padding: 24px 20px;
   text-align: center;
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+}
+
+.btn-player-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #15803d;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-player-back:hover {
+  background: #f0fdf4;
 }
 
 .payment-thumbnail-wrapper {

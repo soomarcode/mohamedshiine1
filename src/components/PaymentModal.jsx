@@ -34,7 +34,11 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
                 <div className="payment-body-simple">
                     <div className="payment-course-info">
                         <div className="payment-thumbnail-wrapper">
-                            <img src={course.image} alt={course.title} className="payment-course-thumbnail" />
+                            <img
+                                src={course.image || course.image_url || '/images/course-placeholder.png'}
+                                alt={course.title}
+                                className="payment-course-thumbnail"
+                            />
                         </div>
                         <p className="course-desc-payment">{course.description}</p>
                         <div className="payment-amount-badge">${course.price}</div>

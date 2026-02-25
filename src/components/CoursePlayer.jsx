@@ -109,7 +109,12 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
     return (
         <div className="course-player-page">
             <header className="player-header">
-                <div className="header-left">
+                <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <button className="btn-player-back" onClick={onBack}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        <span>Back</span>
+                    </button>
+                    <div className="v-divider" style={{ width: '1px', height: '24px', background: '#e2e8f0' }}></div>
                     <img src="/images/logo.png" alt="Logo" className="player-logo" onClick={onBack} style={{ cursor: 'pointer' }} />
                 </div>
                 <div className="header-right">
