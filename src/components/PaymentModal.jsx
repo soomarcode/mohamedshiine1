@@ -66,11 +66,12 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
                             <label>Geli Lambarkaaga (EVC ama eDahab)</label>
                             <input
                                 type="tel"
-                                placeholder="Geli lambarka ( tusaale 6xxxxxxxx )"
+                                placeholder="Geli lambarka"
                                 value={phoneNumber}
                                 onChange={(e) => setPhoneNumber(e.target.value)}
                                 autoFocus
                             />
+                            <span className="payment-hint">Tusaale: 61xxxxxxx</span>
                         </div>
 
                         <button className="btn-pay-now" onClick={handlePayment} disabled={isProcessing}>

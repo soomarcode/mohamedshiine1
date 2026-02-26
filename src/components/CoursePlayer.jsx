@@ -130,22 +130,26 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
             <div className="player-container">
                 <div className="player-content">
                     <div className="breadcrumbs">
-                        <span>Courses</span> / <span>{course.title}</span> / <span className="current">{activeLesson?.title || 'Cashar lama helin'}</span>
+                        <span>Courses</span> / <span className="current">{activeLesson?.title || 'Cashar lama helin'}</span>
                     </div>
 
                     <div className="video-wrapper">
                         <span className="badge-free">{course.type === 'free' ? 'FREE' : 'PAID'}</span>
                         {activeLesson ? (
-                            <iframe
-                                width="100%"
-                                height="100%"
-                                src={`https://www.youtube.com/embed/${extractYouTubeId(activeLesson.youtube_id)}?rel=0&modestbranding=1`}
-                                title={activeLesson.title}
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowFullScreen
-                                style={{ border: 'none', borderRadius: '12px' }}
-                            ></iframe>
+                            <div className="youtube-player-container" style={{ position: 'relative', width: '100%', height: '100%' }}>
+                                <iframe
+                                    width="100%"
+                                    height="100%"
+                                    src={`https://www.youtube.com/embed/${extractYouTubeId(activeLesson.youtube_id)}?rel=0&modestbranding=1&showinfo=0&autohide=1&controls=1`}
+                                    title={activeLesson.title}
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowFullScreen
+                                    style={{ border: 'none', borderRadius: '12px' }}
+                                ></iframe>
+                                {/* Overlay to block 'Watch on YouTube' button */}
+                                <div className="youtube-overlay-blocker"></div>
+                            </div>
                         ) : (
                             <div style={{ color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', background: '#000', borderRadius: '12px' }}>
                                 Video looma helin casharkaan
@@ -229,7 +233,8 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                                             {lessons.map((lesson, index) => {
                                                 const isActive = activeLesson?.id === lesson.id;
                                                 const isCompleted = completedLessons.includes(lesson.id);
-                                                const isLocked = isPreviewMode && index > 0;
+                                                // Only lock paid courses in preview mode, and only after the first lesson
+                                                const isLocked = course.type !== 'free' && isPreviewMode && index > 0;
 
                                                 return (
                                                     <li

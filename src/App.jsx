@@ -12,13 +12,22 @@ import WhatsAppButton from './components/WhatsAppButton';
 import './index.css';
 
 function App() {
+  // Initialize state from localStorage if available
+  const [view, setView] = useState(() => localStorage.getItem('app_view') || 'home');
+  const [currentCourse, setCurrentCourse] = useState(() => {
+    const saved = localStorage.getItem('app_current_course');
+    try {
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      console.error('Error parsing currentCourse from storage:', e);
+      return null;
+    }
+  });
+  const [user, setUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalView, setModalView] = useState('select');
-  const [user, setUser] = useState(null);
-  const [currentCourse, setCurrentCourse] = useState(null);
-  const [view, setView] = useState('home'); // 'home', 'player', 'admin'
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(() => localStorage.getItem('app_preview_mode') === 'true');
 
   console.log('App Rendering, view:', view);
 
@@ -46,7 +55,14 @@ function App() {
     });
 
     return () => subscription.unsubscribe();
-  }, [currentCourse]); // Re-bind if currentCourse changes to catch SIGNED_IN properly
+  }, [currentCourse]);
+
+  // Persist state changes
+  useEffect(() => {
+    localStorage.setItem('app_view', view);
+    localStorage.setItem('app_current_course', currentCourse ? JSON.stringify(currentCourse) : '');
+    localStorage.setItem('app_preview_mode', isPreviewMode ? 'true' : 'false');
+  }, [view, currentCourse, isPreviewMode]);
 
   const openAuthModal = (view = 'select') => {
     setModalView(view);
@@ -54,9 +70,9 @@ function App() {
   };
 
   const handleCourseClick = (course) => {
-    console.log('Selected Course:', course); // Debugging
+    console.log('Selected Course:', course);
     setCurrentCourse(course);
-    setIsPreviewMode(false); // Reset preview mode
+    setIsPreviewMode(false);
     if (!user) {
       openAuthModal('signup');
     } else {
@@ -65,9 +81,15 @@ function App() {
   };
 
   const handlePreviewClick = (course) => {
+    console.log('Preview Selected:', course);
     setCurrentCourse(course);
-    setIsPreviewMode(true);
-    setView('player');
+    // Even for preview/daawo, ask for login if not logged in
+    if (!user) {
+      openAuthModal('signup');
+    } else {
+      setIsPreviewMode(true);
+      setView('player');
+    }
   };
 
   const processCourse = (course) => {

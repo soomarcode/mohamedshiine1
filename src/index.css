@@ -2073,3 +2073,35 @@ img {
     padding: 12px 10px;
   }
 }
+
+/* UI Refinements */
+.payment-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(26, 35, 50, 0.45);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.youtube-overlay-blocker {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 150px;
+  height: 60px;
+  background: transparent;
+  z-index: 10;
+  cursor: default;
+}
+
+/* Auth Modal Mobile Optimization */
+@media (max-width: 480px) {
+  .auth-form .form-group {
+    margin-bottom: 12px;
+  }
+
+  .auth-form input {
+    padding: 10px 12px 10px 38px !important;
+    font-size: 0.85rem !important;
+  }
+}

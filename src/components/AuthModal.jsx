@@ -179,7 +179,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'select', onLoginSuccess }) 
                                 <span className="input-icon">📞</span>
                                 <input
                                     type="tel"
-                                    placeholder="WhatsApp Number (e.g. 61XXXXXXX)"
+                                    placeholder="WhatsApp Number (e.g. +25261XXXXXXX)"
                                     value={whatsapp}
                                     onChange={(e) => setWhatsapp(e.target.value)}
                                     required
