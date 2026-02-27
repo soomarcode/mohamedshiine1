@@ -32,7 +32,7 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
 
                 <div className="payment-body-simple">
                     <button className="btn-cancel-payment" onClick={onClose}>
-                        ✕ Cancel
+                        ✕
                     </button>
 
                     <div className="payment-course-info">
