@@ -29,9 +29,12 @@ const PaymentModal = ({ course, isOpen, onClose, onComplete }) => {
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content payment-modal-simple" onClick={e => e.stopPropagation()}>
-                <button className="modal-close" onClick={onClose}>&times;</button>
 
                 <div className="payment-body-simple">
+                    <button className="btn-cancel-payment" onClick={onClose}>
+                        ✕ Cancel
+                    </button>
+
                     <div className="payment-course-info">
                         <div className="payment-thumbnail-wrapper">
                             <img
