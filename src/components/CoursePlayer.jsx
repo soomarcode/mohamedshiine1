@@ -136,19 +136,19 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                     <div className="video-wrapper">
                         <span className="badge-free">{course.type === 'free' ? 'FREE' : 'PAID'}</span>
                         {activeLesson ? (
-                            <div className="youtube-player-container" style={{ position: 'relative', width: '100%', height: '100%' }}>
+                            <div className="youtube-player-container" style={{ position: 'relative', width: '100%', height: '100%' }} onContextMenu={e => e.preventDefault()}>
                                 <iframe
                                     width="100%"
                                     height="100%"
                                     src={`https://www.youtube-nocookie.com/embed/${extractYouTubeId(activeLesson.youtube_id)}?rel=0&modestbranding=1&showinfo=0&autohide=1&controls=1&disablekb=0&fs=0&iv_load_policy=3&playsinline=1`}
                                     title={activeLesson.title}
                                     frameBorder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                                     referrerPolicy="strict-origin-when-cross-origin"
                                     sandbox="allow-scripts allow-same-origin allow-presentation"
-                                    style={{ border: 'none', borderRadius: '12px' }}
+                                    style={{ border: 'none', borderRadius: '12px', pointerEvents: 'auto' }}
                                 ></iframe>
-                                {/* Overlay blocks to prevent clicking YouTube logo and Watch on YouTube */}
+                                {/* Overlays to block YouTube logo, copy link, and Watch on YouTube */}
                                 <div className="youtube-overlay-blocker youtube-overlay-top"></div>
                                 <div className="youtube-overlay-blocker youtube-overlay-bottom"></div>
                             </div>
