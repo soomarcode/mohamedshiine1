@@ -8,7 +8,13 @@ export default function CourseCard(props) {
     const courseData = { id, title, price, pricelabel, description, image, buttontext, type };
 
     return (
-        <div className="course-card" onClick={() => onClick(courseData)} style={{ cursor: 'pointer' }}>
+        <div className="course-card" onClick={(e) => {
+            if (props.onPreview) {
+                props.onPreview(courseData);
+            } else {
+                onClick(courseData);
+            }
+        }} style={{ cursor: 'pointer' }}>
             <div className="course-card-content">
                 <div className="course-card-header">
                     <span className={`price-badge ${isFree ? 'free' : 'paid'}`}>

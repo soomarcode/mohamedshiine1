@@ -1622,22 +1622,24 @@ img {
 }
 
 .btn-enroll-now {
-  background: #22c55e !important;
+  background: linear-gradient(135deg, #2563eb, #1e40af) !important;
   color: white !important;
   font-weight: 700;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.15);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
   border: none !important;
   transition: all 0.3s ease;
-  padding: 6px 14px !important;
-  font-size: 0.75rem !important;
+  padding: 8px 18px !important;
+  font-size: 0.8rem !important;
   line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .btn-enroll-now:hover {
-  background: #16a34a !important;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+  background: linear-gradient(135deg, #1d4ed8, #1e3a8a) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
 }
 
 .btn-mark-complete,
@@ -2021,7 +2023,7 @@ img {
   top: 0;
   right: 0;
   width: 100%;
-  height: 60px;
+  height: 80px;
   /* Cover Copy link, Title, etc. */
 }
 

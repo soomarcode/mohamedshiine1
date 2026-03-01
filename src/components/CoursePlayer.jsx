@@ -205,15 +205,18 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                                                         <button
                                                             className="btn-enroll-now"
                                                             style={{
-                                                                padding: '6px 14px',
-                                                                fontSize: '0.75rem',
-                                                                background: '#22c55e',
+                                                                padding: '8px 18px',
+                                                                fontSize: '0.8rem',
+                                                                background: 'linear-gradient(135deg, #2563eb, #1e40af)', /* Beautiful blue gradient */
                                                                 color: 'white',
-                                                                borderRadius: '6px',
+                                                                borderRadius: '8px',
                                                                 fontWeight: 700,
                                                                 border: 'none',
-                                                                boxShadow: '0 2px 8px rgba(34, 197, 94, 0.2)',
-                                                                cursor: 'pointer'
+                                                                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)', /* Blue shadow */
+                                                                cursor: 'pointer',
+                                                                transition: 'all 0.3s ease',
+                                                                textTransform: 'uppercase',
+                                                                letterSpacing: '0.5px'
                                                             }}
                                                             onClick={onEnroll}
                                                         >
