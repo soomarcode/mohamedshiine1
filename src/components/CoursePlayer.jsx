@@ -205,16 +205,16 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                                                         <button
                                                             className="btn-enroll-now"
                                                             style={{
-                                                                padding: '8px 18px',
-                                                                fontSize: '0.8rem',
-                                                                background: 'linear-gradient(135deg, #2563eb, #1e40af)', /* Beautiful blue gradient */
+                                                                padding: '10px 32px',
+                                                                fontSize: '0.9rem',
+                                                                background: 'linear-gradient(135deg, #1e3a5f, #1a2332)',
                                                                 color: 'white',
-                                                                borderRadius: '8px',
+                                                                borderRadius: '6px',
                                                                 fontWeight: 700,
                                                                 border: 'none',
-                                                                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)', /* Blue shadow */
+                                                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                                                                 cursor: 'pointer',
-                                                                transition: 'all 0.3s ease',
+                                                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                                                 textTransform: 'uppercase',
                                                                 letterSpacing: '0.5px'
                                                             }}
