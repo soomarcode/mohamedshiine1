@@ -157,7 +157,7 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                                         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                                         referrerPolicy="strict-origin-when-cross-origin"
                                         sandbox="allow-scripts allow-same-origin allow-presentation"
-                                        style={{ border: 'none', borderRadius: '12px', pointerEvents: 'auto' }}
+                                        style={{ border: 'none', borderRadius: '12px' }}
                                     ></iframe>
                                     {/* Overlays to block YouTube logo, copy link, and Watch on YouTube */}
                                     <div className="youtube-overlay-blocker youtube-overlay-top"></div>

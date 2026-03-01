@@ -2009,27 +2009,36 @@ img {
   height: 100%;
 }
 
-.youtube-overlay-blocker {
-  position: absolute;
-  z-index: 9999;
-  pointer-events: auto;
-  /* Block clicks to the underlying iframe */
-  background: rgba(0, 0, 0, 0.01);
-  /* Almost invisible but solid for catching clicks */
+/* The iframe should not receive pointer events */
+.youtube-player-container iframe {
+  pointer-events: none;
 }
 
-.youtube-overlay-top {
+/* Overlay that re-enables clicks only in the center/bottom area for play controls */
+.youtube-overlay-blocker.youtube-overlay-top {
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
   width: 100%;
-  height: 120px;
-  /* Cover Copy link, Title, etc. */
+  height: 100%;
+  z-index: 5;
+  background: transparent;
+  pointer-events: auto;
+  cursor: default;
 }
 
-/* We remove the bottom overlay so standard controls remain accessible */
+/* Clickable zone in the center to allow play/pause */
 .youtube-overlay-bottom {
-  display: none;
+  position: absolute;
+  top: 25%;
+  left: 5%;
+  right: 5%;
+  bottom: 15%;
+  z-index: 10;
+  background: transparent;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .admin-form input,
