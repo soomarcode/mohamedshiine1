@@ -44,10 +44,6 @@ function App() {
 
       if (event === 'SIGNED_IN') {
         setIsModalOpen(false); // Close auth modal
-        // If we were waiting to access a course, do it now
-        if (currentCourse) {
-          processCourse(currentCourse);
-        }
       } else if (event === 'SIGNED_OUT') {
         setView('home');
         setCurrentCourse(null);

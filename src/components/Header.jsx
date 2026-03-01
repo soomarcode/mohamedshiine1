@@ -37,7 +37,6 @@ export default function Header({ onLogin, user, onAdminClick }) {
                 {user ? (
                     <div className="header-user">
                         <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column' }}>
-                            <span style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--text-dark)' }}>{displayName}</span>
                             <button
                                 onClick={handleLogout}
                                 style={{

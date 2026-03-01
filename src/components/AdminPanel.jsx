@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
 
 const AdminPanel = ({ onBack }) => {
-    const [view, setView] = useState('courses'); // 'courses', 'lessons', or 'quizzes'
+    const [view, setView] = useState('courses'); // 'courses', 'lessons', 'quizzes', or 'certificates'
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [lessons, setLessons] = useState([]);
@@ -12,6 +12,10 @@ const AdminPanel = ({ onBack }) => {
     const [imageFile, setImageFile] = useState(null);
     const [quizQuestions, setQuizQuestions] = useState([]);
     const [isAddingQuiz, setIsAddingQuiz] = useState(false);
+    const [certificateData, setCertificateData] = useState(null);
+    const [certTemplateFile, setCertTemplateFile] = useState(null);
+    const [certSignatureFile, setCertSignatureFile] = useState(null);
+    const [isUploadingCert, setIsUploadingCert] = useState(false);
 
     // Course Form state
     const [courseFormData, setCourseFormData] = useState({
@@ -217,6 +221,69 @@ const AdminPanel = ({ onBack }) => {
         fetchQuiz(course.id);
     };
 
+    const openCertificates = async (course) => {
+        setSelectedCourse(course);
+        setView('certificates');
+        setLoading(true);
+        const { data, error } = await supabase
+            .from('certificates')
+            .select('*')
+            .eq('course_id', course.id)
+            .single();
+        if (!error && data) setCertificateData(data);
+        else setCertificateData(null);
+        setLoading(false);
+    };
+
+    const uploadCertFile = async (file) => {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `cert_${Date.now()}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+            .from('certificate-templates')
+            .upload(fileName, file);
+        if (uploadError) throw uploadError;
+        const { data: { publicUrl } } = supabase.storage
+            .from('certificate-templates')
+            .getPublicUrl(fileName);
+        return publicUrl;
+    };
+
+    const handleCertificateSubmit = async (e) => {
+        e.preventDefault();
+        if (!certTemplateFile && !certificateData?.template_url) {
+            alert('Please upload a certificate template image');
+            return;
+        }
+        setIsUploadingCert(true);
+        try {
+            let templateUrl = certificateData?.template_url || '';
+            let signatureUrl = certificateData?.signature_url || '';
+            if (certTemplateFile) templateUrl = await uploadCertFile(certTemplateFile);
+            if (certSignatureFile) signatureUrl = await uploadCertFile(certSignatureFile);
+
+            if (certificateData?.id) {
+                const { error } = await supabase
+                    .from('certificates')
+                    .update({ template_url: templateUrl, signature_url: signatureUrl })
+                    .eq('id', certificateData.id);
+                if (error) throw error;
+            } else {
+                const { error } = await supabase
+                    .from('certificates')
+                    .insert([{ course_id: selectedCourse.id, template_url: templateUrl, signature_url: signatureUrl }]);
+                if (error) throw error;
+            }
+            alert('Certificate saved!');
+            openCertificates(selectedCourse);
+            setCertTemplateFile(null);
+            setCertSignatureFile(null);
+        } catch (error) {
+            alert('Error: ' + error.message);
+        } finally {
+            setIsUploadingCert(false);
+        }
+    };
+
     return (
         <div className="admin-panel">
             <div className="admin-header">
@@ -224,7 +291,8 @@ const AdminPanel = ({ onBack }) => {
                     <h1>
                         {view === 'courses' ? 'Admin Dashboard - Courses' :
                             view === 'lessons' ? `Lessons: ${selectedCourse?.title}` :
-                                `Quiz: ${selectedCourse?.title}`}
+                                view === 'quizzes' ? `Quiz: ${selectedCourse?.title}` :
+                                    `Certificate: ${selectedCourse?.title}`}
                     </h1>
                     <button onClick={view === 'courses' ? onBack : () => setView('courses')} className="btn-admin-back">
                         {view === 'courses' ? '← Back to Site' : '← Back to Courses'}
@@ -320,6 +388,7 @@ const AdminPanel = ({ onBack }) => {
                                     <td className="row-actions">
                                         <button onClick={() => openLessons(course)} className="btn-manage">Lessons</button>
                                         <button onClick={() => openQuiz(course)} className="btn-manage" style={{ background: '#ca8a04' }}>Quiz</button>
+                                        <button onClick={() => openCertificates(course)} className="btn-manage" style={{ background: '#7c3aed' }}>Certificate</button>
                                         <button onClick={() => deleteCourse(course.id)} className="btn-delete">Delete</button>
                                     </td>
                                 </tr>
@@ -343,7 +412,7 @@ const AdminPanel = ({ onBack }) => {
                             ))}
                         </tbody>
                     </table>
-                ) : (
+                ) : view === 'quizzes' ? (
                     <table>
                         <thead>
                             <tr><th>Question</th><th>Correct</th><th>Actions</th></tr>
@@ -360,6 +429,42 @@ const AdminPanel = ({ onBack }) => {
                             ))}
                         </tbody>
                     </table>
+                ) : (
+                    <div className="certificate-admin-section">
+                        {certificateData ? (
+                            <div className="cert-preview-card" style={{ background: 'white', borderRadius: '12px', padding: '20px', marginBottom: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+                                <h3 style={{ marginBottom: '12px', color: '#1a2332' }}>Current Certificate Template</h3>
+                                <img src={certificateData.template_url} alt="Certificate Template" style={{ width: '100%', maxWidth: '500px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '12px' }} />
+                                {certificateData.signature_url && (
+                                    <div style={{ marginTop: '10px' }}>
+                                        <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>Signature:</span>
+                                        <img src={certificateData.signature_url} alt="Signature" style={{ height: '40px', marginLeft: '10px', verticalAlign: 'middle' }} />
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div style={{ background: '#f8fafc', border: '2px dashed #e2e8f0', borderRadius: '12px', padding: '30px', textAlign: 'center', marginBottom: '20px', color: '#94a3b8' }}>
+                                No certificate template uploaded yet.
+                            </div>
+                        )}
+
+                        <form onSubmit={handleCertificateSubmit} className="admin-form" style={{ background: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+                            <h3 style={{ marginBottom: '16px' }}>{certificateData ? 'Update' : 'Upload'} Certificate</h3>
+                            <div className="admin-form-group">
+                                <label>Certificate Template Image (background design)</label>
+                                <input type="file" accept="image/*" onChange={(e) => setCertTemplateFile(e.target.files[0])} required={!certificateData} />
+                            </div>
+                            <div className="admin-form-group" style={{ marginTop: '12px' }}>
+                                <label>Signature Image (optional)</label>
+                                <input type="file" accept="image/*" onChange={(e) => setCertSignatureFile(e.target.files[0])} />
+                            </div>
+                            <div className="admin-form-actions" style={{ marginTop: '16px' }}>
+                                <button type="submit" className="btn-admin-save" disabled={isUploadingCert}>
+                                    {isUploadingCert ? 'Uploading...' : 'Save Certificate'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 )}
             </div>
         </div>
