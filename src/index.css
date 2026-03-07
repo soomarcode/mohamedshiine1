@@ -2009,36 +2009,9 @@ img {
   height: 100%;
 }
 
-/* The iframe should not receive pointer events */
+/* The iframe MUST receive pointer events to be playable */
 .youtube-player-container iframe {
-  pointer-events: none;
-}
-
-/* Overlay that re-enables clicks only in the center/bottom area for play controls */
-.youtube-overlay-blocker.youtube-overlay-top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 5;
-  background: transparent;
   pointer-events: auto;
-  cursor: default;
-}
-
-/* Clickable zone in the center to allow play/pause */
-.youtube-overlay-bottom {
-  position: absolute;
-  top: 25%;
-  left: 5%;
-  right: 5%;
-  bottom: 15%;
-  z-index: 10;
-  background: transparent;
-  pointer-events: auto;
-  cursor: pointer;
 }
 
 .admin-form input,
@@ -2139,9 +2112,9 @@ img {
 
 .youtube-overlay-bottom {
   bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 65px;
+  right: 0;
+  width: 120px;
+  height: 50px;
 }
 
 /* Red Cancel Button for Payment Modal */
