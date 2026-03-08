@@ -1,4 +1,4 @@
--- 1. DROP the table if it exists with wrong types
+-- -- 1. DROP the table if it exists with wrong types
 DROP TABLE IF EXISTS public.course_reviews;
 
 -- 2. Create the reviews table
