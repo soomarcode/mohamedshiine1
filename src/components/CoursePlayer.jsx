@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
 import CertificateGenerator from './CertificateGenerator';
+import ReviewSection from './ReviewSection';
 
 const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
     const [lessons, setLessons] = useState([]);
@@ -170,22 +171,28 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                             )}
                         </div>
 
-                        {quizQuestions.length > 0 && (
-                            <div className="player-tabs">
-                                <button
-                                    className={`player-tab ${activeTab === 'curriculum' ? 'active' : ''}`}
-                                    onClick={() => setActiveTab('curriculum')}
-                                >
-                                    Curriculum
-                                </button>
+                        <div className="player-tabs">
+                            <button
+                                className={`player-tab ${activeTab === 'curriculum' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('curriculum')}
+                            >
+                                Curriculum
+                            </button>
+                            {quizQuestions.length > 0 && (
                                 <button
                                     className={`player-tab ${activeTab === 'quiz' ? 'active' : ''}`}
                                     onClick={() => setActiveTab('quiz')}
                                 >
                                     Quiz
                                 </button>
-                            </div>
-                        )}
+                            )}
+                            <button
+                                className={`player-tab ${activeTab === 'reviews' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('reviews')}
+                            >
+                                Reviews
+                            </button>
+                        </div>
 
                         <div className="tab-content" style={{ marginTop: '20px' }}>
                             {activeTab === 'curriculum' ? (
@@ -366,6 +373,8 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                                         </div>
                                     </div>
                                 </div>
+                            ) : activeTab === 'reviews' ? (
+                                <ReviewSection courseId={course.id} user={user} />
                             ) : (
                                 <div className="quiz-container">
                                     {showQuizResults ? (
