@@ -15,6 +15,7 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
     const [activeTab, setActiveTab] = useState('curriculum');
     const [certificateTemplate, setCertificateTemplate] = useState(null);
     const [showCertificate, setShowCertificate] = useState(false);
+    const [isWideView, setIsWideView] = useState(false);
 
     // Helper to extract YouTube ID from URL
     const extractYouTubeId = (input) => {
@@ -118,6 +119,34 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
 
     const currentProgress = calculateProgress();
 
+    const videoContent = (
+        <>
+            <span className="badge-free" style={isWideView ? { top: '20px', left: '20px' } : {}}>{course.type === 'free' ? 'FREE' : 'PAID'}</span>
+            {activeLesson ? (
+                <div className="youtube-player-container" style={{ position: 'relative', width: '100%', height: '100%' }} onContextMenu={e => e.preventDefault()}>
+                    <iframe
+                        width="100%"
+                        height="100%"
+                        src={`https://www.youtube-nocookie.com/embed/${extractYouTubeId(activeLesson.youtube_id)}?rel=0&modestbranding=1&showinfo=0&autohide=1&controls=1&disablekb=0&fs=1&iv_load_policy=3&playsinline=1`}
+                        title={activeLesson.title}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                        allowFullScreen
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        sandbox="allow-scripts allow-same-origin allow-presentation"
+                        style={{ border: 'none', borderRadius: isWideView ? '0' : '12px' }}
+                    ></iframe>
+                    {/* Overlay to block copy link and title */}
+                    <div className="youtube-overlay-blocker youtube-overlay-top"></div>
+                </div>
+            ) : (
+                <div style={{ color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', background: '#000', borderRadius: isWideView ? '0' : '12px' }}>
+                    Video looma helin casharkaan
+                </div>
+            )}
+        </>
+    );
+
     return (
         <>
             <div className="course-player-page">
@@ -139,37 +168,44 @@ const CoursePlayer = ({ course, onBack, isPreviewMode, onEnroll }) => {
                     </div>
                 </header>
 
+                {isWideView && (
+                    <div className="theater-mode-bg" style={{ width: '100%', background: '#000', display: 'flex', justifyContent: 'center' }}>
+                        <div style={{ width: '100%', maxWidth: '1600px', aspectRatio: '16/9', maxHeight: 'calc(100vh - 100px)', position: 'relative' }}>
+                            {videoContent}
+                        </div>
+                    </div>
+                )}
+
                 <div className="player-container">
                     <div className="player-content">
-                        <div className="breadcrumbs">
-                            <span>Courses</span> / <span className="current">{activeLesson?.title || 'Cashar lama helin'}</span>
+                        <div className="breadcrumbs" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                                <span>Courses</span> / <span className="current">{activeLesson?.title || 'Cashar lama helin'}</span>
+                            </div>
+                            <button 
+                                onClick={() => setIsWideView(!isWideView)} 
+                                style={{
+                                    background: 'white', border: '1px solid #e2e8f0', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '500', color: '#1e293b', boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                                }}>
+                                {isWideView ? (
+                                    <>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
+                                        Default View
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                                        Wide View
+                                    </>
+                                )}
+                            </button>
                         </div>
 
-                        <div className="video-wrapper">
-                            <span className="badge-free">{course.type === 'free' ? 'FREE' : 'PAID'}</span>
-                            {activeLesson ? (
-                                <div className="youtube-player-container" style={{ position: 'relative', width: '100%', height: '100%' }} onContextMenu={e => e.preventDefault()}>
-                                    <iframe
-                                        width="100%"
-                                        height="100%"
-                                        src={`https://www.youtube-nocookie.com/embed/${extractYouTubeId(activeLesson.youtube_id)}?rel=0&modestbranding=1&showinfo=0&autohide=1&controls=1&disablekb=0&fs=0&iv_load_policy=3&playsinline=1`}
-                                        title={activeLesson.title}
-                                        frameBorder="0"
-                                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                        referrerPolicy="strict-origin-when-cross-origin"
-                                        sandbox="allow-scripts allow-same-origin allow-presentation"
-                                        style={{ border: 'none', borderRadius: '12px' }}
-                                    ></iframe>
-                                    {/* Overlays to block YouTube logo, copy link, and Watch on YouTube */}
-                                    <div className="youtube-overlay-blocker youtube-overlay-top"></div>
-                                    <div className="youtube-overlay-blocker youtube-overlay-bottom"></div>
-                                </div>
-                            ) : (
-                                <div style={{ color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', background: '#000', borderRadius: '12px' }}>
-                                    Video looma helin casharkaan
-                                </div>
-                            )}
-                        </div>
+                        {!isWideView && (
+                            <div className="video-wrapper">
+                                {videoContent}
+                            </div>
+                        )}
 
                         <div className="player-tabs">
                             <button
